@@ -77,7 +77,7 @@ export function SettingRow({
   );
 }
 
-export function CommandLine({ command, copyLabel = "Copy command" }: { command: string; copyLabel?: string }) {
+export function CommandLine({ command, copyLabel = t("settings.copyCommand") }: { command: string; copyLabel?: string }) {
   const { state, copy } = useCopyFeedback(command);
 
   return (

@@ -38,6 +38,6 @@ export const BOT_SECTIONS: Array<{
   { id: "permissions", label: "Permissions", labelKey: "newBot.section.permissions", icon: ShieldCheck, keywords: ["auto mode", "approve", "auto approve", "review", "routine approvals", "peers", "contact", "coordination", "chief of staff", "section"] },
   { id: "voice", label: "Voice & alerts", labelKey: "newBot.section.voiceAlerts", icon: Mic, keywords: ["voice", "alerts", "notifications", "speak"] },
   { id: "visibility", label: "Who can see it", labelKey: "botSettings.visibility.title", icon: Eye, keywords: ["visibility", "who can see", "private", "people", "admins", "members", "access", "hide"] },
-  { id: "history", label: "History", icon: History, keywords: ["history", "changes", "undo", "rollback", "log"] },
-  { id: "usage", label: "Usage", icon: Coins, keywords: ["tokens", "cost", "billing"] },
+  { id: "history", label: "History", labelKey: "botSettings.section.history", icon: History, keywords: ["history", "changes", "undo", "rollback", "log"] },
+  { id: "usage", label: "Usage", labelKey: "botSettings.section.usage", icon: Coins, keywords: ["tokens", "cost", "billing"] },
 ];

@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-const WEEKDAY_LABELS = ["M", "T", "W", "T", "F", "S", "S"];
+import { t } from "@/lib/i18n";
+
+const WEEKDAY_LABELS = ["routines.miniMonth.mon", "routines.miniMonth.tue", "routines.miniMonth.wed", "routines.miniMonth.thu", "routines.miniMonth.fri", "routines.miniMonth.sat", "routines.miniMonth.sun"] as const;
 
 function startOfMonth(value: number | Date) {
   const date = new Date(value);
@@ -52,7 +54,7 @@ export function MiniMonth({ anchor, onSelect }: MiniMonthProps) {
   });
 
   return (
-    <section aria-label="Mini calendar" className="select-none px-3 py-3">
+    <section aria-label={t("routines.miniMonth.aria")} className="select-none px-3 py-3">
       <div className="mb-2 flex items-center justify-between px-1">
         <div className="text-[12.5px] font-semibold text-ink">{monthLabel}</div>
         <div className="flex items-center gap-0.5">
@@ -60,7 +62,7 @@ export function MiniMonth({ anchor, onSelect }: MiniMonthProps) {
             type="button"
             onClick={() => setVisibleMonth((month) => moveMonth(month, -1))}
             className="flex size-7 items-center justify-center rounded-full text-ink-secondary transition-colors hover:bg-raised hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60"
-            aria-label="Previous month"
+            aria-label={t("routines.miniMonth.previous")}
           >
             <ChevronLeft size={15} aria-hidden="true" />
           </button>
@@ -68,7 +70,7 @@ export function MiniMonth({ anchor, onSelect }: MiniMonthProps) {
             type="button"
             onClick={() => setVisibleMonth((month) => moveMonth(month, 1))}
             className="flex size-7 items-center justify-center rounded-full text-ink-secondary transition-colors hover:bg-raised hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60"
-            aria-label="Next month"
+            aria-label={t("routines.miniMonth.next")}
           >
             <ChevronRight size={15} aria-hidden="true" />
           </button>
@@ -81,7 +83,7 @@ export function MiniMonth({ anchor, onSelect }: MiniMonthProps) {
             key={`${label}-${index}`}
             className="flex h-6 items-center justify-center text-[9px] font-semibold uppercase tracking-[0.08em] text-ink-tertiary"
           >
-            {label}
+            {t(label)}
           </div>
         ))}
       </div>

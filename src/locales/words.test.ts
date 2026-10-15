@@ -7,6 +7,8 @@ import en from "./en.json";
 const ALLOWED = new Set([
   "engines.account.apiKey", // the Anthropic Console's "workspace API key"
   "engineSetup.device.enableHint", // a ChatGPT "workspace admin"
+  "apps.blurb.googlemeet", // the product's own name: Google Workspace
+  "apps.blurb.coda", // the product's own feature name: Coda team workspaces
 ]);
 
 it("English copy says Organization and installation, not Organisation or workspace", () => {

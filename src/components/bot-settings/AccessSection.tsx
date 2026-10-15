@@ -671,33 +671,33 @@ export function AccessSection({
       <div className="rounded-xl bg-card p-4">
         <div className="flex items-center justify-between gap-4">
           <div>
-            <div className="text-[15px] font-medium text-ink">Browser</div>
+            <div className="text-[15px] font-medium text-ink">{t("place.browser")}</div>
             <div className="mt-0.5 text-[13px] text-ink-secondary">
               {!desktopBrowser
                 ? browserBlockedOnWindows && !browserInstallable
-                  ? "Not available on this Windows machine yet: install the browser engine with `openmausbot browser install`."
+                  ? t("access.browser.notInstalled")
                   : browserUnavailableReason(state.config)
                 : !browserFeature
-                  ? "The built-in browser is switched off under App Settings → Computers."
+                  ? t("access.browser.featureOff")
                   : !canUseBrowser
-                    ? "This bot's current model cannot use the built-in browser."
+                    ? t("access.browser.modelCannot")
                     : bot.computer === "off"
-                      ? "Works on is set to Off, so this bot has no browser. Choose another place in the Computer panel to give it one."
+                      ? t("access.browser.placeOff")
                       : browserEnabled
-                        ? "This bot has its own browser with its own logins."
-                        : "Keep the built-in browser unavailable to this bot."}
+                        ? t("access.browser.own")
+                        : t("access.browser.off")}
             </div>
             <ProposalStatus bot={bot} kind="owner" />
           </div>
           <Switch
             checked={browserEnabled && bot.computer !== "off"}
-            aria-label="Give this bot a built-in browser"
+            aria-label={t("access.browser.allow")}
             disabled={
               bot.computer === "off" ||
               (!browserEnabled && ((!desktopBrowser && !browserInstallable) || !browserFeature || !canUseBrowser))
             }
             onClick={() => patch({ browser: !browserAllowed })}
-            title={bot.computer === "off" ? "Works on is set to Off, so this bot has no browser" : undefined}
+            title={bot.computer === "off" ? t("access.browser.placeOffShort") : undefined}
             className="disabled:cursor-not-allowed"
           />
         </div>
@@ -712,11 +712,11 @@ export function AccessSection({
       </div>
 
       {!draft && <div className="rounded-xl bg-card p-4">
-        <div className="text-[15px] font-medium text-ink">Webhooks</div>
-        <div className="mt-0.5 text-[13px] text-ink-secondary">Inbound triggers wired to this bot.</div>
+        <div className="text-[15px] font-medium text-ink">{t("routines.webhooks")}</div>
+        <div className="mt-0.5 text-[13px] text-ink-secondary">{t("access.webhooks.detail")}</div>
         <ProposalStatus bot={bot} kind="owner" />
         {webhooks.length === 0 ? (
-          <div className="mt-3 rounded-lg bg-inset px-3 py-2 text-[12px] text-ink-secondary">No webhooks for this bot.</div>
+          <div className="mt-3 rounded-lg bg-inset px-3 py-2 text-[12px] text-ink-secondary">{t("access.webhooks.empty")}</div>
         ) : (
           <div className="mt-3 divide-y divide-hairline/40 overflow-hidden rounded-lg border border-hairline/40">
             {webhooks.map((webhook) => (
@@ -728,10 +728,10 @@ export function AccessSection({
                     webhook.enabled ? "bg-accent/15 text-accent-text" : "bg-control text-ink-secondary",
                   )}
                 >
-                  {webhook.enabled ? "Active" : "Paused"}
+                  {webhook.enabled ? t("access.webhooks.active") : t("access.webhooks.paused")}
                 </span>
                 <span className="shrink-0 text-[11.5px] tabular-nums text-ink-secondary">
-                  {webhook.deliveryCount} deliveries
+                  {t("access.webhooks.deliveries", { count: webhook.deliveryCount })}
                 </span>
               </div>
             ))}
@@ -740,11 +740,11 @@ export function AccessSection({
       </div>}
 
       {!draft && <div className="rounded-xl bg-card p-4">
-        <div className="text-[15px] font-medium text-ink">Always allowed</div>
-        <div className="mt-0.5 text-[13px] text-ink-secondary">Tools this bot no longer asks about.</div>
+        <div className="text-[15px] font-medium text-ink">{t("access.alwaysAllowed.title")}</div>
+        <div className="mt-0.5 text-[13px] text-ink-secondary">{t("access.alwaysAllowed.detail")}</div>
         <ProposalStatus bot={bot} kind="owner" />
         {alwaysAllow.length === 0 ? (
-          <div className="mt-3 rounded-lg bg-inset px-3 py-2 text-[12px] text-ink-secondary">Nothing standing yet.</div>
+          <div className="mt-3 rounded-lg bg-inset px-3 py-2 text-[12px] text-ink-secondary">{t("access.alwaysAllowed.empty")}</div>
         ) : (
           <div className="mt-3 divide-y divide-hairline/40 overflow-hidden rounded-lg border border-hairline/40">
             {alwaysAllow.map((entry) => (
@@ -752,11 +752,11 @@ export function AccessSection({
                 <span className="min-w-0 flex-1 truncate font-mono text-[12.5px] text-ink">{entry}</span>
                 <button
                   type="button"
-                  aria-label={`Remove ${entry} from always allowed`}
+                  aria-label={t("access.alwaysAllowed.removeAria", { entry })}
                   onClick={() => patch({ alwaysAllow: alwaysAllow.filter((key) => key !== entry) })}
                   className="shrink-0 rounded-md px-2 py-1 text-[12px] text-ink-secondary hover:bg-danger/10 hover:text-danger"
                 >
-                  Remove
+                  {t("access.alwaysAllowed.remove")}
                 </button>
               </div>
             ))}
