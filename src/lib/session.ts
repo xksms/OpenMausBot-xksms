@@ -42,7 +42,9 @@ export async function readSessionState(fetchImpl: typeof fetch = fetch): Promise
   return record.trust === "service" ? { kind: "loopback", trust: "service" } : { kind: "loopback" };
 }
 
-export const SERVICE_TRUST_REASON = "This server does not treat this computer as its owner. Sign in or pair this browser to continue.";
+export function serviceTrustReason(): string {
+  return t("pair.reasonServiceTrust");
+}
 
 export function isConnected(state: SessionState | null): boolean {
   return state?.kind === "session" || (state?.kind === "loopback" && state.trust !== "service");
@@ -68,7 +70,9 @@ export function takeBrowserSignInFromLocation(): string | null {
   return m ? m[1] : null;
 }
 
-export const BROWSER_SIGN_IN_FAILED = "This sign-in link has expired or was already used. On My Cloud, choose “Use in your browser” again.";
+export function browserSignInFailed(): string {
+  return t("pair.reasonBrowserSignInFailed");
+}
 
 /** Never trusted on its own; the one-time code still goes to the address itself. */
 export function takeInvitedEmailFromLocation(): string | null {

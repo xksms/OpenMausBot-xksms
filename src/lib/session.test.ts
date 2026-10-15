@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 
 import {
-  BROWSER_SIGN_IN_FAILED, cloudOwnerOf, isConnected, isOwnerOrAdmin, previewBrowserSignIn, readSessionState, reasonWorthShowing, SERVICE_TRUST_REASON, signInWithBrowserGrant,
+  browserSignInFailed, cloudOwnerOf, isConnected, isOwnerOrAdmin, previewBrowserSignIn, readSessionState, reasonWorthShowing, serviceTrustReason, signInWithBrowserGrant,
   takeBrowserSignInFromLocation, takeInvitedEmailFromLocation, takePairingCodeFromLocation,
 } from "./session";
 
@@ -77,7 +77,7 @@ describe("the OMB Cloud page's \"Use in your browser\" link", () => {
     for (const request of requests) expect(request.body).toMatchObject({ code: credential, cookie: true, browser: true, attemptId: "attempt-page-0001" });
     const spent = (async () => new Response(JSON.stringify({ error: "pairing code is wrong or has expired" }), { status: 401 })) as unknown as typeof fetch;
     expect(await signInWithBrowserGrant(credential, "attempt-page-0002", spent)).toEqual({ ok: false, error: "pairing code is wrong or has expired" });
-    expect(reasonWorthShowing(BROWSER_SIGN_IN_FAILED)).toBe(BROWSER_SIGN_IN_FAILED);
+    expect(reasonWorthShowing(browserSignInFailed())).toBe(browserSignInFailed());
   });
 
   it("names the Cloud's owner afterwards only for a browser sign-in's session on a Cloud home", () => {
@@ -109,6 +109,6 @@ describe("an SSH tunnel to a server that treats local requests as a service", ()
     expect(isConnected({ kind: "session", id: "s", label: "l", scopes: ["client"], expiresAt: 1 })).toBe(true);
     expect(isConnected({ kind: "unauthenticated", error: "pair" })).toBe(false);
     expect(isConnected(null)).toBe(false);
-    expect(reasonWorthShowing(SERVICE_TRUST_REASON)).toBe(SERVICE_TRUST_REASON);
+    expect(reasonWorthShowing(serviceTrustReason())).toBe(serviceTrustReason());
   });
 });
