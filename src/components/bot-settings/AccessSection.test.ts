@@ -2,6 +2,7 @@ import { Children, createElement, isValidElement, type ReactElement, type ReactN
 import { renderToStaticMarkup } from "react-dom/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+import { setLocale } from "@/lib/i18n";
 import { StoreProvider, type Bot, type ConfigStatus } from "@/state/store";
 import type { useBotSettingsDerived } from "./useBotSettingsDerived";
 
@@ -20,10 +21,11 @@ vi.mock("../DesktopCapabilities", () => ({
   useDesktopCapabilities: () => ({ capabilities: { host: { homeDir: undefined } } }),
 }));
 
+setLocale("en");
 const { AccessSection } = await import("./AccessSection");
 
 // WorkingFolder reads window.ogb?.pickFolder at render time, so window is stubbed per test.
-beforeEach(() => { vi.stubGlobal("window", {}); fixture.dispatch.mockReset(); fixture.mcpError = false; fixture.servers = null; fixture.config = null; });
+beforeEach(() => { setLocale("en"); vi.stubGlobal("window", {}); fixture.dispatch.mockReset(); fixture.mcpError = false; fixture.servers = null; fixture.config = null; });
 afterEach(() => vi.unstubAllGlobals());
 
 function makeBot(overrides: Partial<Bot> = {}): Bot {

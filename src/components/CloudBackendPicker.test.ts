@@ -2,6 +2,7 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
+import { setLocale } from "@/lib/i18n";
 import en from "@/locales/en.json";
 
 const fixture = vi.hoisted(() => ({ config: null as unknown }));
@@ -12,6 +13,8 @@ vi.mock("@/state/store", async (importOriginal) => {
 
 const { CloudBackendPicker } = await import("./CloudBackendPicker");
 const picker = (value: "box" | "vps" = "box") => renderToStaticMarkup(createElement(CloudBackendPicker, { value, onChange: () => {} }));
+
+setLocale("en");
 
 describe("CloudBackendPicker", () => {
   afterEach(() => { fixture.config = null; });

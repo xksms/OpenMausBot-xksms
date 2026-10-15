@@ -2,6 +2,7 @@ import { Children, createElement, isValidElement, type ReactElement, type ReactN
 import { renderToStaticMarkup } from "react-dom/server";
 import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
 
+import { setLocale } from "@/lib/i18n";
 import type { Routine } from "@/lib/routines";
 import type { Bot, Message } from "@/state/store";
 import type { ManagedSkill } from "./bot-settings/SkillsSection";
@@ -81,6 +82,7 @@ vi.mock("@/state/store", async (importOriginal) => {
   };
 });
 
+setLocale("en");
 const { BotSettingsDialog } = await import("./BotSettingsDialog");
 const { SimpleBotPanel, botLibraryItems } = await import("./bot-settings/SimpleBotPanel");
 const { SoulField } = await import("./SoulField");

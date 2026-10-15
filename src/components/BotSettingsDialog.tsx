@@ -354,8 +354,8 @@ export function BotSettingsDialog({ bot, overlay = false }: {
               if (query) setQuery("");
               else dispatch({ type: "toggleSettings", open: false });
             }}
-            placeholder="Search"
-            aria-label="Search settings"
+            placeholder={t("settings.search")}
+            aria-label={t("botSettings.search")}
             className="w-full bg-transparent text-[13px] text-ink placeholder:text-ink-secondary focus:outline-none"
           />
         </div>
@@ -363,7 +363,7 @@ export function BotSettingsDialog({ bot, overlay = false }: {
         <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
           {visibleSections.length === 0 && (
             <div className="px-4 py-4 text-[12.5px] leading-relaxed text-ink-secondary">
-              Nothing matches “{query.trim()}”
+              {t("botSettings.searchEmpty", { query: query.trim() })}
             </div>
           )}
           {sections.map((entry) => {
