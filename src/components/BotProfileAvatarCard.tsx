@@ -84,7 +84,7 @@ function AvatarFraming({
         <BotAvatar bot={bot} size={FRAME_SIZE} animated={false} label={`${bot.name} avatar preview`} />
       </div>
       <div className="mb-1.5 mt-4 flex items-baseline justify-between">
-        <span className="text-[12px] font-medium uppercase tracking-[0.08em] text-ink-secondary">Zoom</span>
+        <span className="text-[12px] font-medium uppercase tracking-[0.08em] text-ink-secondary">{t("botAvatar.zoom")}</span>
         <span className="tabular-nums text-[12px] text-ink-secondary">{Math.round(zoom * 100)}%</span>
       </div>
       <input
@@ -94,7 +94,7 @@ function AvatarFraming({
         step={0.01}
         value={zoom}
         disabled={disabled}
-        aria-label="Zoom avatar"
+        aria-label={t("botAvatar.zoomAvatar")}
         aria-valuemin={AVATAR_ZOOM_MIN}
         aria-valuemax={AVATAR_ZOOM_MAX}
         aria-valuenow={zoom}
@@ -103,7 +103,7 @@ function AvatarFraming({
         className="w-full accent-accent"
       />
       <div className="mt-1.5 flex items-center justify-between gap-3 text-[11.5px] text-ink-secondary">
-        <span>Drag the picture to reposition it. Scroll to zoom.</span>
+        <span>{t("botAvatar.framingHelp")}</span>
         {framed && (
           <button
             type="button"
@@ -111,7 +111,7 @@ function AvatarFraming({
             onClick={() => onPatch({ avatarZoom: AVATAR_ZOOM_MIN, avatarFocusX: AVATAR_FOCUS_CENTER, avatarFocusY: AVATAR_FOCUS_CENTER })}
             className="shrink-0 rounded-md px-2 py-1 text-ink hover:bg-control disabled:opacity-50"
           >
-            Reset framing
+            {t("botAvatar.resetFraming")}
           </button>
         )}
       </div>
@@ -328,7 +328,7 @@ export function BotProfileAvatarCard({
             </div>
 
             <div className="mb-2 mt-4 text-[12px] font-medium uppercase tracking-[0.08em] text-ink-secondary">
-              Color
+              {t("botAvatar.color")}
             </div>
             <div className="flex flex-wrap gap-2.5">
               {MAUS_COLOR_NAMES.map((color) => (
@@ -350,7 +350,7 @@ export function BotProfileAvatarCard({
             </div>
 
             <div className="mb-2 mt-4 text-[12px] font-medium uppercase tracking-[0.08em] text-ink-secondary">
-              Body
+              {t("botAvatar.body")}
             </div>
             <div className="grid grid-cols-5 gap-1.5">
               {MASCOT_BODY_IDS.map((id) => (
