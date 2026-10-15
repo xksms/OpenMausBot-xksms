@@ -11277,8 +11277,8 @@ describe("harness HTTP API", () => {
     try {
       const overview = await api("GET", `/api/bots/${kiwi.id}/overview`);
       expect(overview.status).toBe(200);
-      const claimsApps = overview.body.reaches.some((line: string) => line.startsWith("Can use"));
-      const deniesApps = overview.body.wont.includes("Has no connected apps.");
+      const claimsApps = overview.body.reaches.some((line: { text: string }) => line.text.startsWith("Can use"));
+      const deniesApps = overview.body.wont.some((line: { text: string }) => line.text === "Has no connected apps.");
       expect(claimsApps && deniesApps).toBe(false);
     } finally {
       await api("DELETE", `/api/bots/${kiwi.id}`);
@@ -12782,7 +12782,7 @@ describe("bot memory API", () => {
       const fresh = await api("GET", `/api/bots/${bot.id}/overview`);
       expect(fresh.status).toBe(200);
       expect(fresh.body.who.name).toBe("Kiwi");
-      expect(fresh.body.wont).toEqual([
+      expect(fresh.body.wont.map((line: { text: string }) => line.text)).toEqual([
         "Cannot initiate contact with other bots.",
         "Has no connected apps.",
         "Can't use a computer.",
@@ -12794,6 +12794,7 @@ describe("bot memory API", () => {
       const after = await api("GET", `/api/bots/${bot.id}/overview`);
       expect(after.body.who.soulLead).toBe("Never file noise.");
       expect(after.body.recent[0].summary).toMatch(/^soul:/);
+      expect(after.body.recent[0].summaryCode).toBe("history.summary.soul");
 
       expect((await api("GET", "/api/bots/does-not-exist/overview")).status).toBe(404);
     } finally {

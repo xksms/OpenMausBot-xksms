@@ -3526,7 +3526,15 @@ async function botOverview(bot: BotRecord): Promise<BotOverview> {
   const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   // Profile-change rows land asynchronously; flush so a client sees its own change.
   await flushProfileHistory(bot.id);
-  const recent = readHistory(bot.id, 5).map((r) => ({ at: r.at, summary: r.summary }));
+  const recent = readHistory(bot.id, 5).map((r) => ({
+    at: r.at,
+    summary: r.summary,
+    field: r.field,
+    before: r.before,
+    after: r.after,
+    summaryCode: r.summaryCode,
+    summaryParams: r.summaryParams,
+  }));
   return buildBotOverview({
     bot: {
       name: bot.name,

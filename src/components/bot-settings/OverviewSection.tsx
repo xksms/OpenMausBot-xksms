@@ -2,7 +2,9 @@ import { useState } from "react";
 import { Circle, Sparkles } from "lucide-react";
 
 import type { BotOverview } from "@/lib/bot-overview-types";
-import { t } from "@/lib/i18n";
+import { overviewLine } from "@/lib/bot-overview";
+import { historySummary } from "@/lib/history-label";
+import { catalogWord, t } from "@/lib/i18n";
 import { whenLabel } from "@/lib/schedule-label";
 import type { BotSettingsSection } from "@/state/store";
 import { PromptPreview, type PromptPreviewData } from "./PromptPreview";
@@ -44,12 +46,14 @@ export function OverviewSection({
           <div className="text-[15px] font-medium text-ink">{t("botSetup.ideas")}</div>
           <p className="mt-1 text-[13px] text-ink-secondary">{t("botSetup.optional")}</p>
           <ul className="mt-2 flex flex-col gap-1">
-            {remaining.map((step) => (
+            {remaining.map((step) => {
+              const label = catalogWord(`botSetup.step.${step.id}`, step.label);
+              return (
               <li key={step.id}>
                 {!step.section ? (
                   <div className="flex items-center gap-2.5 px-1 py-1 text-[13px] text-ink">
                     <Circle aria-hidden="true" size={14} className="shrink-0 text-ink-secondary" />
-                    <span>{step.label}</span>
+                    <span>{label}</span>
                   </div>
                 ) : (
                   <button
@@ -58,12 +62,13 @@ export function OverviewSection({
                     className="flex w-full items-center gap-2.5 rounded-lg px-1 py-1 text-left text-[13px] text-ink hover:bg-inset"
                   >
                     <Circle aria-hidden="true" size={14} className="shrink-0 text-ink-secondary" />
-                    <span className="flex-1">{step.label}</span>
+                    <span className="flex-1">{label}</span>
                     <span className="text-[12px] text-ink-secondary">→</span>
                   </button>
                 )}
               </li>
-            ))}
+              );
+            })}
           </ul>
           {onSetup && (
             <div className="mt-3 flex items-center gap-3">
@@ -105,7 +110,7 @@ export function OverviewSection({
         ) : (
           <ul className="mt-2 flex flex-col gap-1.5 text-[13px] leading-relaxed text-ink">
             {overview.does.map((line, i) => (
-              <li key={i}>{line}</li>
+              <li key={i}>{overviewLine(line)}</li>
             ))}
           </ul>
         )}
@@ -118,7 +123,7 @@ export function OverviewSection({
         ) : (
           <ul className="mt-2 flex flex-col gap-1.5 text-[13px] leading-relaxed text-ink">
             {overview.reaches.map((line, i) => (
-              <li key={i}>{line}</li>
+              <li key={i}>{overviewLine(line)}</li>
             ))}
           </ul>
         )}
@@ -128,7 +133,7 @@ export function OverviewSection({
         <div className="text-[15px] font-medium text-ink">{t("overview.wont")}</div>
         <ul className="mt-2 flex flex-col gap-1.5 text-[13px] leading-relaxed text-ink">
           {overview.wont.map((line, i) => (
-            <li key={i}>{line}</li>
+            <li key={i}>{overviewLine(line)}</li>
           ))}
         </ul>
       </div>
@@ -157,7 +162,7 @@ export function OverviewSection({
           <ul className="mt-2 flex flex-col gap-1.5 text-[13px] text-ink">
             {overview.recent.map((entry, i) => (
               <li key={i} className="flex items-baseline justify-between gap-3">
-                <span className="min-w-0 truncate">{entry.summary}</span>
+                <span className="min-w-0 truncate">{historySummary(entry)}</span>
                 <span className="shrink-0 text-[11.5px] text-ink-secondary">· {whenLabel(entry.at)}</span>
               </li>
             ))}

@@ -1,4 +1,5 @@
-import { t } from "@/lib/i18n";
+import { historySummary } from "@/lib/history-label";
+import { t, tFromServer } from "@/lib/i18n";
 import { whenLabel } from "@/lib/schedule-label";
 
 export interface HistoryRow {
@@ -8,8 +9,11 @@ export interface HistoryRow {
   via: string;
   field: string;
   summary: string;
+  summaryCode?: string;
+  summaryParams?: Record<string, string | number>;
   canRestore?: boolean;
   restoreUnavailableReason?: string;
+  restoreUnavailableCode?: string;
   before?: string;
   after?: string;
 }
@@ -51,7 +55,7 @@ export function HistorySection({
                 {t("history.actorVia", { actor: row.actor, via: row.via })}
               </span>
               {" · "}
-              <span>{row.summary}</span>
+              <span>{historySummary(row)}</span>
             </div>
             {row.field === "soul" && row.canRestore === true && (
               <button
@@ -66,7 +70,7 @@ export function HistorySection({
           </div>
           {row.field === "soul" && row.canRestore !== true && (
             <p className="mt-2 text-[12px] leading-relaxed text-ink-secondary">
-              {row.restoreUnavailableReason ?? t("history.undoUnavailable")}
+              {tFromServer(row.restoreUnavailableCode, row.restoreUnavailableReason) ?? t("history.undoUnavailable")}
             </p>
           )}
         </div>

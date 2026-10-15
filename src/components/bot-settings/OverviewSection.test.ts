@@ -18,17 +18,29 @@ const sentences: BotOverview = {
     blurb: "Digs into a claim and reports back with sources.",
     soulLead: "Always cite primary sources and separate fact from inference.",
   },
-  does: ["Daily at 9:00 AM: Morning brief. Next run 9:00 AM."],
-  reaches: ["Works in its private workspace.", "Has the built-in browser."],
-  wont: [
-    "Won't run commands without asking you first.",
-    "Won't contact other bots without asking.",
-    "Has no connected apps.",
-    "Can't use a computer.",
-    "Won't act on a schedule.",
-    "Won't change its own instructions without your approval.",
+  does: [{
+    text: "Daily at 9:00 AM: Morning brief. Next run 9:00 AM.",
+    code: "overview.does.routine",
+    params: {
+      schedule: { type: "daily", time: "09:00", weekdays: [0, 1, 2, 3, 4, 5, 6] },
+      name: "Morning brief",
+      nextRun: { text: " Next run 9:00 AM.", code: "overview.does.nextRun", params: { at: 1700000000000 } },
+      lastRun: "",
+    },
+  }],
+  reaches: [
+    { text: "Works in its own folder.", code: "overview.reaches.folderPrivate" },
+    { text: "Has the built-in browser.", code: "overview.reaches.browser" },
   ],
-  recent: [{ at: 1700000000000, summary: "Title changed" }],
+  wont: [
+    { text: "Won't run commands without asking you first.", code: "overview.wont.unshippedAsk" },
+    { text: "Won't contact other bots without asking.", code: "overview.wont.unshippedPeers" },
+    { text: "Has no connected apps.", code: "overview.wont.appsNone" },
+    { text: "Can't use a computer.", code: "overview.wont.computerOff" },
+    { text: "Won't act on a schedule.", code: "overview.wont.scheduleNone" },
+    { text: "Won't change its own instructions without your approval.", code: "overview.wont.unshippedProfile" },
+  ],
+  recent: [{ at: 1700000000000, field: "title", summary: "Title changed" }],
 };
 
 const prompt: PromptPreviewData = {
@@ -42,14 +54,14 @@ describe("OverviewSection", () => {
   it("offers optional setup ideas without declaring a usable bot unfinished", () => {
     const markup = render(createElement(OverviewSection, {
       overview: { ...sentences, setup: [
-        { id: "identity", label: "Identity", done: true, section: "identity" },
-        { id: "folder", label: "Choose a project folder", done: false, section: "access" },
-        { id: "schedule", label: "Add a routine", done: false, section: "routines" },
+        { id: "identity", label: "Give it a name and a role", done: true, section: "identity" },
+        { id: "folder", label: "Choose a working folder", done: false, section: "access" },
+        { id: "schedule", label: "Add a schedule or a trigger", done: false, section: "routines" },
       ] }, prompt: null, onOpen: vi.fn(),
     }));
     expect(markup).toContain("Setup ideas");
     expect(markup).toContain("You can start chatting now.");
-    expect(markup).toContain("Choose a project folder");
+    expect(markup).toContain("Choose a working folder");
     expect(markup).not.toContain("Finish setting up");
     expect(markup).not.toContain("1 of 3 done");
     expect(markup).not.toContain(">Identity</span>");
@@ -68,9 +80,11 @@ describe("OverviewSection", () => {
     );
 
     for (const line of sentences.wont) {
-      expect(markup).toContain(line);
+      expect(markup).toContain(line.text);
     }
-    expect(markup).toContain(sentences.does[0]);
+    expect(markup).toContain("Morning brief");
+    expect(markup).toContain("every day at");
+    expect(markup).toContain("Next run");
     expect(markup).toContain("Read all");
   });
 
@@ -98,7 +112,7 @@ describe("OverviewSection", () => {
 
     expect(markup).toContain("Couldn’t refresh — showing the last loaded overview.");
     for (const line of sentences.wont) {
-      expect(markup).toContain(line);
+      expect(markup).toContain(line.text);
     }
   });
 

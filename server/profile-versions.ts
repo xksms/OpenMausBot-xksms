@@ -17,10 +17,14 @@ export interface HistoryRow {
   via: string;
   field: string;
   summary: string;
+  /** Set when the summary is a sentence we word, so a client can say it its own way. */
+  summaryCode?: string;
+  summaryParams?: Record<string, string | number>;
   before?: string;
   after?: string;
   canRestore?: boolean;
   restoreUnavailableReason?: string;
+  restoreUnavailableCode?: string;
 }
 
 const FILE_NAME = "history.ndjson";
@@ -40,7 +44,18 @@ function rowFor(field: string, at: number, actor: HistoryActor, via: string, bef
   if (field === "soul") {
     const b = Buffer.byteLength(before, "utf8");
     const a = Buffer.byteLength(after, "utf8");
-    return { id: randomUUID(), at, actor, via, field, summary: `soul: ${b} → ${a} bytes`, before, after };
+    return {
+      id: randomUUID(),
+      at,
+      actor,
+      via,
+      field,
+      summary: `soul: ${b} → ${a} bytes`,
+      summaryCode: "history.summary.soul",
+      summaryParams: { before: b, after: a },
+      before,
+      after,
+    };
   }
   const b = oneLiner(before);
   const a = oneLiner(after);
@@ -52,12 +67,14 @@ function withRestoreEligibility(row: HistoryRow): HistoryRow {
   const canRestore = row.field === "soul" && typeof row.before === "string" &&
     row.canRestore !== false && row.before === redacted.before &&
     !/«redacted \d+ chars»/.test(row.before);
+  const explainsRestoreFailure = row.field === "soul" && !canRestore;
   return {
     ...redacted,
     canRestore,
-    restoreUnavailableReason: row.field === "soul" && !canRestore
+    restoreUnavailableReason: explainsRestoreFailure
       ? "This version is missing exact text or contains redacted sensitive text and cannot be restored."
       : undefined,
+    restoreUnavailableCode: explainsRestoreFailure ? "history.undoUnavailableExact" : undefined,
   };
 }
 

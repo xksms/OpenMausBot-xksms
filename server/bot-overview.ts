@@ -4,12 +4,36 @@ import type { RoutineRequestSchedule } from "../shared/routine-request.ts";
 import { approvalModeFor } from "../shared/approval-mode.ts";
 import { cronScheduleLabel } from "../shared/cron-label.ts";
 
+/** A schedule riding along inside a line's params, for a client to word itself. */
+export type OverviewSchedule = RoutineRequestSchedule | Routine["schedule"];
+
+/** One sentence for the Overview panel: `text` is the English this build words,
+ * `code` names the catalog template a client can say it with instead, and
+ * `params` refill that template. A param named `at` is an epoch-millisecond
+ * clock time. */
+export interface OverviewLine {
+  text: string;
+  code: string;
+  params?: Record<string, string | number | OverviewLine | OverviewSchedule>;
+}
+
+export interface OverviewRecent {
+  at: number;
+  summary: string;
+  field: string;
+  before?: string;
+  after?: string;
+  /** Set when the summary is a sentence we word rather than recorded data. */
+  summaryCode?: string;
+  summaryParams?: Record<string, string | number>;
+}
+
 export interface BotOverview {
   who: { name: string; title: string; blurb: string; soulLead: string };
-  does: string[];
-  reaches: string[];
-  wont: string[];
-  recent: Array<{ at: number; summary: string }>;
+  does: OverviewLine[];
+  reaches: OverviewLine[];
+  wont: OverviewLine[];
+  recent: OverviewRecent[];
   grants?: BotOverviewGrant[];
   setup: SetupStep[];
 }
@@ -67,7 +91,7 @@ export interface OverviewFacts {
   connectedApps: { configured: boolean; authoritative: boolean; services: string[] };
   sectionPeers: number;
   timeZone: string;
-  recent: Array<{ at: number; summary: string }>;
+  recent: OverviewRecent[];
 }
 
 export function soulLead(soul: string | undefined): string {
@@ -75,6 +99,10 @@ export function soulLead(soul: string | undefined): string {
   if (!trimmed) return "";
   const paragraph = (trimmed.split(/\r?\n\s*\r?\n/)[0] ?? trimmed).trim();
   return paragraph.length > 240 ? `${paragraph.slice(0, 240).trimEnd()}…` : paragraph;
+}
+
+function line(code: string, text: string, params?: OverviewLine["params"]): OverviewLine {
+  return params ? { text, code, params } : { text, code };
 }
 
 function lowerFirst(value: string): string {
@@ -131,26 +159,40 @@ function latestRunFor(runs: OverviewFacts["runs"], routineId: string): OverviewF
   return best;
 }
 
-function doesLines(facts: OverviewFacts): string[] {
-  const lines: string[] = [];
+function doesLines(facts: OverviewFacts): OverviewLine[] {
+  const lines: OverviewLine[] = [];
   for (const routine of facts.routines) {
     if (!routine.enabled) {
-      lines.push(`Paused: ${routine.name}.`);
+      lines.push(line("overview.does.paused", `Paused: ${routine.name}.`, { name: routine.name }));
       continue;
     }
-    const nextRun = routine.nextRunAt != null ? ` Next run ${time(routine.nextRunAt, facts.timeZone)}.` : "";
+    const nextRun = routine.nextRunAt != null
+      ? line("overview.does.nextRun", ` Next run ${time(routine.nextRunAt, facts.timeZone)}.`, { at: routine.nextRunAt })
+      : undefined;
     const latest = latestRunFor(facts.runs, routine.id);
     const at = latest ? latest.finishedAt ?? latest.startedAt ?? latest.scheduledFor : undefined;
-    const lastRun = latest ? ` Last run ${latest.status} at ${time(at!, facts.timeZone)}.` : "";
-    lines.push(`${schedulePhrase(routine.schedule, facts.timeZone)}: ${routine.name}.${nextRun}${lastRun}`);
+    const lastRun = latest && at != null
+      ? line("overview.does.lastRun", ` Last run ${latest.status} at ${time(at, facts.timeZone)}.`, {
+        status: line(`overview.runStatus.${latest.status}`, latest.status),
+        at,
+      })
+      : undefined;
+    const schedule = schedulePhrase(routine.schedule, facts.timeZone);
+    lines.push(line("overview.does.routine", `${schedule}: ${routine.name}.${nextRun?.text ?? ""}${lastRun?.text ?? ""}`, {
+      schedule: routine.schedule,
+      name: routine.name,
+      nextRun: nextRun ?? "",
+      lastRun: lastRun ?? "",
+    }));
   }
   for (const skill of facts.skills) {
     if (!skill.enabled) continue;
-    lines.push(`Knows how to ${lowerFirst(skill.description || skill.name)}.`);
+    const what = lowerFirst(skill.description || skill.name);
+    lines.push(line("overview.does.skill", `Knows how to ${what}.`, { what }));
   }
   for (const webhook of facts.webhooks) {
     if (!webhook.enabled) continue;
-    lines.push(`Listens for “${webhook.name}” webhooks.`);
+    lines.push(line("overview.does.webhook", `Listens for “${webhook.name}” webhooks.`, { name: webhook.name }));
   }
   return lines;
 }
@@ -189,61 +231,77 @@ export function grantsSummary(connectorTools: BotRecord["connectorTools"]): BotO
     .sort((a, b) => (a.slug < b.slug ? -1 : 1));
 }
 
-function computerReach(computer: BotRecord["computer"], cloudHome = false): string | null {
+function computerReach(computer: BotRecord["computer"], cloudHome = false): OverviewLine | null {
   const unavailable = cloudHome ? ", which isn't available on My Cloud" : "";
   switch (computer) {
     case "cloud":
-      return "Computer preference: cloud computer.";
+      return line("overview.reaches.computer.cloud", "Computer preference: cloud computer.");
     case "vm":
-      return `Computer preference: Local VM${unavailable}.`;
+      return cloudHome
+        ? line("overview.reaches.computer.vmCloud", `Computer preference: Local VM${unavailable}.`)
+        : line("overview.reaches.computer.vm", "Computer preference: Local VM.");
     case "local":
-      return `Computer preference: this computer${unavailable}.`;
+      return cloudHome
+        ? line("overview.reaches.computer.localCloud", `Computer preference: this computer${unavailable}.`)
+        : line("overview.reaches.computer.local", "Computer preference: this computer.");
     case "browser":
-      return "Computer preference: browser only.";
+      return line("overview.reaches.computer.browser", "Computer preference: browser only.");
     case "off":
       return null;
     default:
-      return "Computer preference: Auto; availability is checked when a task starts.";
+      return line("overview.reaches.computer.auto", "Computer preference: Auto; availability is checked when a task starts.");
   }
 }
 
-function reachesLines(facts: OverviewFacts): string[] {
-  const lines: string[] = [];
+function reachesLines(facts: OverviewFacts): OverviewLine[] {
+  const lines: OverviewLine[] = [];
   const computer = computerReach(facts.bot.computer, facts.cloudHome);
   if (computer) lines.push(computer);
-  lines.push(facts.bot.cwd ? `Works in ${facts.bot.cwd}.` : "Works in its private workspace.");
+  lines.push(facts.bot.cwd
+    ? line("overview.reaches.folder", `Works in ${facts.bot.cwd}.`, { cwd: facts.bot.cwd })
+    : line("overview.reaches.folderPrivate", "Works in its own folder."));
   const apps = facts.connectedApps;
   if (couldUseApps(facts) && apps.authoritative && apps.services.length > 0) {
     const count = apps.services.length;
-    lines.push(`Can use ${count} connected app${count === 1 ? "" : "s"}: ${apps.services.join(", ")}.`);
+    const listed = apps.services.join(", ");
+    lines.push(count === 1
+      ? line("overview.reaches.appsOne", `Can use 1 connected app: ${listed}.`, { apps: listed })
+      : line("overview.reaches.appsMany", `Can use ${count} connected apps: ${listed}.`, { count, apps: listed }));
   } else if (couldUseApps(facts) && !apps.authoritative) {
-    lines.push("Connected apps could not be checked.");
+    lines.push(line("overview.reaches.appsUnknown", "Connected apps could not be checked."));
   }
-  if (facts.browserEnabled && facts.engine?.browserMcp && facts.bot.browser !== false && facts.bot.computer !== "off") lines.push("Has the built-in browser.");
+  if (facts.browserEnabled && facts.engine?.browserMcp && facts.bot.browser !== false && facts.bot.computer !== "off") {
+    lines.push(line("overview.reaches.browser", "Has the built-in browser."));
+  }
   if (facts.engine?.agentsMcp && facts.sectionPeers > 0 && facts.bot.peers?.length !== 0) {
-    const scope = facts.bot.chiefOfStaff && facts.bot.managedSections?.length ? "its allowed teams" : "its section";
-    lines.push(`Can talk to ${facts.sectionPeers} other bot${facts.sectionPeers === 1 ? "" : "s"} in ${scope}.`);
+    const teams = facts.bot.chiefOfStaff && facts.bot.managedSections?.length;
+    const one = facts.sectionPeers === 1;
+    const scope = teams ? "its allowed teams" : "its section";
+    lines.push(one
+      ? line(teams ? "overview.reaches.peersOneTeams" : "overview.reaches.peersOne", `Can talk to 1 other bot in ${scope}.`)
+      : line(teams ? "overview.reaches.peersManyTeams" : "overview.reaches.peersMany", `Can talk to ${facts.sectionPeers} other bots in ${scope}.`, { count: facts.sectionPeers }));
   }
-  if (facts.bot.chiefOfStaff) lines.push("Coordinates its section as Chief of Staff.");
+  if (facts.bot.chiefOfStaff) lines.push(line("overview.reaches.chief", "Coordinates its section as Chief of Staff."));
   if (facts.bot.chiefOfStaff && facts.bot.managedSections?.length) {
-    lines.push(`May also coordinate these teams: ${facts.bot.managedSections.map(name => name || "General").join(", ")}.`);
+    const teams = facts.bot.managedSections.map(name => name || "General").join(", ");
+    lines.push(line("overview.reaches.chiefTeams", `May also coordinate these teams: ${teams}.`, { teams }));
   }
   return lines;
 }
 
-function wontLines(facts: OverviewFacts): string[] {
-  const lines: string[] = [];
+function wontLines(facts: OverviewFacts): OverviewLine[] {
+  const lines: OverviewLine[] = [];
   const mode = approvalModeFor(facts.bot);
-  if (mode === "ask") lines.push("Command approvals use Ask mode; saved permissions and provider rules still apply.");
-  if (mode === "custom") lines.push("Command approvals follow the provider's custom configuration.");
-  if (facts.bot.peers?.length === 0) lines.push("Cannot initiate contact with other bots.");
-  else if (mode !== "full" && facts.bot.approvePeerComms) lines.push("Asks before contacting other bots.");
+  if (mode === "ask") lines.push(line("overview.wont.approvalsAsk", "Command approvals use Ask mode; saved permissions and provider rules still apply."));
+  if (mode === "custom") lines.push(line("overview.wont.approvalsCustom", "Command approvals follow the provider's custom configuration."));
+  if (facts.bot.peers?.length === 0) lines.push(line("overview.wont.peersNone", "Cannot initiate contact with other bots."));
+  else if (mode !== "full" && facts.bot.approvePeerComms) lines.push(line("overview.wont.peersAsk", "Asks before contacting other bots."));
   if (!couldUseApps(facts) || (facts.connectedApps.authoritative && facts.connectedApps.services.length === 0)) {
-    lines.push("Has no connected apps.");
+    lines.push(line("overview.wont.appsNone", "Has no connected apps."));
   }
-  if (facts.bot.computer === "off") lines.push("Can't use a computer.");
-  if (!facts.routines.some((routine) => routine.enabled)) lines.push("Won't act on a schedule.");
-  if (mode !== "full") lines.push("Profile proposal cards require your approval.");
+  if (facts.bot.computer === "off") lines.push(line("overview.wont.computerOff", "Can't use a computer."));
+  if (!facts.routines.some((routine) => routine.enabled)) lines.push(line("overview.wont.scheduleNone", "Won't act on a schedule."));
+  if (mode !== "full") lines.push(line("overview.wont.profileApproval", "Profile proposal cards require your approval."));
   return lines;
 }
 

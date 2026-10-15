@@ -1,6 +1,14 @@
 import { describe, expect, it } from "vitest";
 
-import { buildBotOverview, connectedAppsFacts, grantsSummary, setupSteps, soulLead, type OverviewFacts } from "./bot-overview.ts";
+import {
+  buildBotOverview,
+  connectedAppsFacts,
+  grantsSummary,
+  setupSteps,
+  soulLead,
+  type OverviewFacts,
+  type OverviewLine,
+} from "./bot-overview.ts";
 
 function baseFacts(overrides: Partial<OverviewFacts> = {}): OverviewFacts {
   return {
@@ -32,6 +40,8 @@ function baseFacts(overrides: Partial<OverviewFacts> = {}): OverviewFacts {
   };
 }
 
+const texts = (lines: OverviewLine[]): string[] => lines.map((line) => line.text);
+
 const WONT_ORDER = [
   "Command approvals use Ask mode; saved permissions and provider rules still apply.",
   "Cannot initiate contact with other bots.",
@@ -44,55 +54,55 @@ const WONT_ORDER = [
 describe("buildBotOverview", () => {
   it("describes additional teams only for an authorized Chief", () => {
     const facts = baseFacts({ bot: { ...baseFacts().bot, chiefOfStaff: true, managedSections: ["Engineering", "Research"], peers: undefined }, engine: { agentsMcp: true }, sectionPeers: 3 });
-    expect(buildBotOverview(facts).reaches).toContain("Can talk to 3 other bots in its allowed teams.");
-    expect(buildBotOverview(facts).reaches).toContain("May also coordinate these teams: Engineering, Research.");
+    expect(texts(buildBotOverview(facts).reaches)).toContain("Can talk to 3 other bots in its allowed teams.");
+    expect(texts(buildBotOverview(facts).reaches)).toContain("May also coordinate these teams: Engineering, Research.");
     facts.bot.chiefOfStaff = false;
-    expect(buildBotOverview(facts).reaches.join(" ")).not.toContain("Engineering");
+    expect(texts(buildBotOverview(facts).reaches).join(" ")).not.toContain("Engineering");
   });
   it("yields all six wont lines in order and no does lines for a bot on Ask", () => {
     const overview = buildBotOverview(baseFacts({ bot: { ...baseFacts().bot, approvalMode: "ask" } }));
-    expect(overview.wont).toEqual(WONT_ORDER);
+    expect(texts(overview.wont)).toEqual(WONT_ORDER);
     expect(overview.does).toEqual([]);
   });
 
   it("describes a fresh bot at the default level, Full access", () => {
-    expect(buildBotOverview(baseFacts()).wont).toEqual(WONT_ORDER.slice(1, -1));
+    expect(texts(buildBotOverview(baseFacts()).wont)).toEqual(WONT_ORDER.slice(1, -1));
   });
 
   it("drops the first wont line when autoApprove is on", () => {
     const overview = buildBotOverview(baseFacts({ bot: { ...baseFacts().bot, autoApprove: true } }));
-    expect(overview.wont).toEqual(WONT_ORDER.slice(1));
+    expect(texts(overview.wont)).toEqual(WONT_ORDER.slice(1));
   });
 
   it("uses the effective approval level rather than the legacy Auto bit", () => {
     const bot = { ...baseFacts().bot, approvalMode: "full" as const, autoApprove: false };
-    expect(buildBotOverview(baseFacts({ bot })).wont).not.toContain(WONT_ORDER[0]);
-    expect(buildBotOverview(baseFacts({ bot: { ...bot, approvalMode: "custom" } })).wont)
+    expect(texts(buildBotOverview(baseFacts({ bot })).wont)).not.toContain(WONT_ORDER[0]);
+    expect(texts(buildBotOverview(baseFacts({ bot: { ...bot, approvalMode: "custom" } })).wont))
       .toContain("Command approvals follow the provider's custom configuration.");
   });
 
   it("does not promise duplicate profile or peer approvals in Full Access", () => {
     const bot = { ...baseFacts().bot, peers: undefined, approvePeerComms: true, approvalMode: "full" as const, autoApprove: false };
-    const full = buildBotOverview(baseFacts({ bot })).wont;
+    const full = texts(buildBotOverview(baseFacts({ bot })).wont);
     expect(full).not.toContain("Asks before contacting other bots.");
     expect(full).not.toContain("Profile proposal cards require your approval.");
     for (const approvalMode of ["ask", "custom"] as const) {
-      const reviewed = buildBotOverview(baseFacts({ bot: { ...bot, approvalMode, autoApprove: true } })).wont;
+      const reviewed = texts(buildBotOverview(baseFacts({ bot: { ...bot, approvalMode, autoApprove: true } })).wont);
       expect(reviewed).toContain("Asks before contacting other bots.");
       expect(reviewed).toContain("Profile proposal cards require your approval.");
     }
-    expect(buildBotOverview(baseFacts({ bot: { ...bot, peers: [] } })).wont)
+    expect(texts(buildBotOverview(baseFacts({ bot: { ...bot, peers: [] } })).wont))
       .toContain("Cannot initiate contact with other bots.");
   });
 
   it("does not advertise a browser disabled globally or unsupported by the engine", () => {
     const facts = baseFacts({ bot: { ...baseFacts().bot, computer: "browser" }, browserEnabled: true, engine: { browserMcp: false } });
-    expect(buildBotOverview(facts).reaches).not.toContain("Has the built-in browser.");
+    expect(texts(buildBotOverview(facts).reaches)).not.toContain("Has the built-in browser.");
     facts.engine = { browserMcp: true };
     facts.browserEnabled = false;
-    expect(buildBotOverview(facts).reaches).not.toContain("Has the built-in browser.");
+    expect(texts(buildBotOverview(facts).reaches)).not.toContain("Has the built-in browser.");
     facts.browserEnabled = true;
-    expect(buildBotOverview(facts).reaches).toContain("Has the built-in browser.");
+    expect(texts(buildBotOverview(facts).reaches)).toContain("Has the built-in browser.");
   });
 
   it("renders an enabled interval routine with its last completed run", () => {
@@ -112,12 +122,37 @@ describe("buildBotOverview", () => {
     });
     const overview = buildBotOverview(facts);
     expect(overview.does).toHaveLength(1);
-    expect(overview.does[0]).toMatch(/^Every 5 minutes: Triage Discord\./);
-    expect(overview.does[0]).not.toContain("UTC");
-    expect(overview.does[0]).not.toContain("anchored");
-    expect(overview.does[0]).toContain("Last run completed at");
-    expect(overview.does[0]).toContain("Next run");
-    expect(overview.wont).not.toContain("Won't act on a schedule.");
+    expect(overview.does[0]!.text).toMatch(/^Every 5 minutes: Triage Discord\./);
+    expect(overview.does[0]!.text).not.toContain("UTC");
+    expect(overview.does[0]!.text).not.toContain("anchored");
+    expect(overview.does[0]!.text).toContain("Last run completed at");
+    expect(overview.does[0]!.text).toContain("Next run");
+    expect(texts(overview.wont)).not.toContain("Won't act on a schedule.");
+  });
+
+  it("carries the catalog code and the values a client words each line from", () => {
+    const facts = baseFacts({
+      bot: { ...baseFacts().bot, computer: "local", cwd: "/work" },
+      routines: [
+        { id: "r1", name: "Triage Discord", enabled: true, schedule: { type: "interval", everyMinutes: 5, anchorAt: 1_000 }, nextRunAt: 2_000 },
+      ],
+      runs: [{ routineId: "r1", status: "completed", finishedAt: 1_500, scheduledFor: 1_000 }],
+    });
+    const overview = buildBotOverview(facts);
+    const routine = overview.does[0]!;
+    expect(routine.code).toBe("overview.does.routine");
+    expect(routine.params!.schedule).toEqual({ type: "interval", everyMinutes: 5, anchorAt: 1_000 });
+    expect(routine.params!.name).toBe("Triage Discord");
+    const nextRun = routine.params!.nextRun as OverviewLine;
+    expect(nextRun.code).toBe("overview.does.nextRun");
+    expect(nextRun.params).toEqual({ at: 2_000 });
+    const lastRun = routine.params!.lastRun as OverviewLine;
+    expect(lastRun.code).toBe("overview.does.lastRun");
+    expect(lastRun.params!.at).toBe(1_500);
+    expect((lastRun.params!.status as OverviewLine).code).toBe("overview.runStatus.completed");
+    expect(overview.reaches[0]).toEqual({ text: "Computer preference: this computer.", code: "overview.reaches.computer.local" });
+    expect(overview.reaches[1]).toEqual({ text: "Works in /work.", code: "overview.reaches.folder", params: { cwd: "/work" } });
+    expect(overview.wont.every((line) => line.code.startsWith("overview.wont."))).toBe(true);
   });
 
   it("renders a paused routine as Paused: name", () => {
@@ -133,8 +168,8 @@ describe("buildBotOverview", () => {
       ],
     });
     const overview = buildBotOverview(facts);
-    expect(overview.does).toEqual(["Paused: Nightly Backup."]);
-    expect(overview.wont).toContain("Won't act on a schedule.");
+    expect(texts(overview.does)).toEqual(["Paused: Nightly Backup."]);
+    expect(texts(overview.wont)).toContain("Won't act on a schedule.");
   });
 
   it("renders enabled skills and webhooks as their own does lines", () => {
@@ -149,7 +184,7 @@ describe("buildBotOverview", () => {
       ],
     });
     const overview = buildBotOverview(facts);
-    expect(overview.does).toEqual([
+    expect(texts(overview.does)).toEqual([
       "Knows how to triage incoming bug reports.",
       "Listens for “Linear” webhooks.",
     ]);
@@ -162,8 +197,8 @@ describe("buildBotOverview", () => {
       connectedApps: { configured: true, authoritative: true, services: ["gmail", "linear"] },
     });
     const overview = buildBotOverview(facts);
-    expect(overview.reaches).toContain("Can use 2 connected apps: gmail, linear.");
-    expect(overview.wont).not.toContain("Has no connected apps.");
+    expect(texts(overview.reaches)).toContain("Can use 2 connected apps: gmail, linear.");
+    expect(texts(overview.wont)).not.toContain("Has no connected apps.");
   });
 
   it("reports connected apps could not be checked when unauthoritative, without also claiming none connected", () => {
@@ -173,9 +208,9 @@ describe("buildBotOverview", () => {
       connectedApps: { configured: true, authoritative: false, services: [] },
     });
     const overview = buildBotOverview(facts);
-    expect(overview.reaches).toContain("Connected apps could not be checked.");
-    expect(overview.wont).not.toContain("Has no connected apps.");
-    expect(overview.reaches.some((line) => line.startsWith("Can use"))).toBe(false);
+    expect(texts(overview.reaches)).toContain("Connected apps could not be checked.");
+    expect(texts(overview.wont)).not.toContain("Has no connected apps.");
+    expect(texts(overview.reaches).some((line) => line.startsWith("Can use"))).toBe(false);
   });
 
   it("states 'Has no connected apps.' when apps are off for the bot, even if the inventory is unverifiable", () => {
@@ -187,8 +222,8 @@ describe("buildBotOverview", () => {
       connectedApps: { configured: true, authoritative: false, services: [] },
     });
     const overview = buildBotOverview(facts);
-    expect(overview.wont).toContain("Has no connected apps.");
-    expect(overview.reaches).not.toContain("Connected apps could not be checked.");
+    expect(texts(overview.wont)).toContain("Has no connected apps.");
+    expect(texts(overview.reaches)).not.toContain("Connected apps could not be checked.");
   });
 
   it("stays silent about apps in reaches when the engine cannot mount them", () => {
@@ -198,8 +233,8 @@ describe("buildBotOverview", () => {
       connectedApps: { configured: true, authoritative: false, services: ["gmail"] },
     });
     const overview = buildBotOverview(facts);
-    expect(overview.wont).toContain("Has no connected apps.");
-    expect(overview.reaches.some((line) => line.includes("connected app"))).toBe(false);
+    expect(texts(overview.wont)).toContain("Has no connected apps.");
+    expect(texts(overview.reaches).some((line) => line.includes("connected app"))).toBe(false);
   });
 
   it("uses the singular for one connected app", () => {
@@ -208,7 +243,9 @@ describe("buildBotOverview", () => {
       engine: { composioMcp: true },
       connectedApps: { configured: true, authoritative: true, services: ["gmail"] },
     });
-    expect(buildBotOverview(facts).reaches).toContain("Can use 1 connected app: gmail.");
+    const reaches = buildBotOverview(facts).reaches;
+    expect(texts(reaches)).toContain("Can use 1 connected app: gmail.");
+    expect(reaches.find((line) => line.text.startsWith("Can use"))!.code).toBe("overview.reaches.appsOne");
   });
 
   it("writes daily and once schedules as prose", () => {
@@ -218,10 +255,10 @@ describe("buildBotOverview", () => {
         { id: "b", name: "Digest", enabled: true, schedule: { type: "daily", time: "18:00", weekdays: [0, 1, 2, 3, 4, 5, 6] }, nextRunAt: null },
         { id: "c", name: "Review", enabled: true, schedule: { type: "daily", time: "08:00", weekdays: [3] }, nextRunAt: null },
         { id: "d", name: "Launch", enabled: true, schedule: { type: "once", at: Date.UTC(2026, 8, 5, 12) }, nextRunAt: null },
-        { id: "e", name: "Hourly", enabled: true, schedule: { type: "interval", everyMinutes: 60 }, nextRunAt: null },
+        { id: "e", name: "Hourly", enabled: true, schedule: { type: "interval", everyMinutes: 60, anchorAt: 1 }, nextRunAt: null },
       ],
     }));
-    expect(overview.does).toEqual([
+    expect(texts(overview.does)).toEqual([
       "Every weekday at 9:30 AM: Standup.",
       "Every day at 6:00 PM: Digest.",
       "Weekly on Wednesday at 8:00 AM: Review.",
@@ -235,22 +272,23 @@ describe("buildBotOverview", () => {
       bot: { ...baseFacts().bot, computer: undefined, peers: undefined, approvePeerComms: false },
     });
     const overview = buildBotOverview(facts);
-    expect(overview.reaches).toContain("Computer preference: Auto; availability is checked when a task starts.");
-    expect(overview.wont).not.toContain("Can't use a computer.");
-    expect(overview.wont).not.toContain("Won't contact other bots without asking.");
+    expect(texts(overview.reaches)).toContain("Computer preference: Auto; availability is checked when a task starts.");
+    expect(texts(overview.wont)).not.toContain("Can't use a computer.");
+    expect(texts(overview.wont)).not.toContain("Won't contact other bots without asking.");
   });
 
   it("says a Cloud home cannot use this computer or a Local VM, and changes nothing elsewhere", () => {
     const reach = (computer: OverviewFacts["bot"]["computer"], cloudHome?: boolean) =>
-      buildBotOverview(baseFacts({ bot: { ...baseFacts().bot, computer }, ...(cloudHome === undefined ? {} : { cloudHome }) })).reaches[0];
-    expect(reach("local", true)).toBe("Computer preference: this computer, which isn't available on My Cloud.");
-    expect(reach("vm", true)).toBe("Computer preference: Local VM, which isn't available on My Cloud.");
-    expect(reach("cloud", true)).toBe("Computer preference: cloud computer.");
-    expect(reach("browser", true)).toBe("Computer preference: browser only.");
-    expect(reach(undefined, true)).toBe("Computer preference: Auto; availability is checked when a task starts.");
+      buildBotOverview(baseFacts({ bot: { ...baseFacts().bot, computer }, ...(cloudHome === undefined ? {} : { cloudHome }) })).reaches[0]!;
+    expect(reach("local", true).text).toBe("Computer preference: this computer, which isn't available on My Cloud.");
+    expect(reach("local", true).code).toBe("overview.reaches.computer.localCloud");
+    expect(reach("vm", true).text).toBe("Computer preference: Local VM, which isn't available on My Cloud.");
+    expect(reach("cloud", true).text).toBe("Computer preference: cloud computer.");
+    expect(reach("browser", true).text).toBe("Computer preference: browser only.");
+    expect(reach(undefined, true).text).toBe("Computer preference: Auto; availability is checked when a task starts.");
     for (const cloudHome of [undefined, false]) {
-      expect(reach("local", cloudHome)).toBe("Computer preference: this computer.");
-      expect(reach("vm", cloudHome)).toBe("Computer preference: Local VM.");
+      expect(reach("local", cloudHome).text).toBe("Computer preference: this computer.");
+      expect(reach("vm", cloudHome).text).toBe("Computer preference: Local VM.");
     }
   });
 });
