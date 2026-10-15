@@ -53,10 +53,19 @@ export function tFromServer(key: string | undefined, fallback: string | undefine
   return key && Object.hasOwn(en, key) ? t(key as LocaleKey) : fallback;
 }
 
-export function t(key: LocaleKey, params?: Record<string, string | number>): string {
-  const template = activePack[key] ?? en[key];
+function fill(template: string, params?: Record<string, string | number>): string {
   if (!params) return template;
   return template.replace(/\{(\w+)\}/g, (match, name: string) =>
-    name in params ? String(params[name]) : match,
+    Object.hasOwn(params, name) ? String(params[name]) : match,
   );
+}
+
+export function t(key: LocaleKey, params?: Record<string, string | number>): string {
+  return fill(activePack[key] ?? en[key], params);
+}
+
+/** A key's word in the reader's language, or the English this build ships for a
+ * key the catalog does not carry yet. */
+export function catalogWord(key: string, english: string, params?: Record<string, string | number>): string {
+  return Object.hasOwn(en, key) ? t(key as LocaleKey, params) : fill(english, params);
 }

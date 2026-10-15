@@ -27,7 +27,7 @@ export function NoEngines() {
       <main className="relative flex h-full min-w-0 flex-1 items-center justify-center bg-app px-6">
         <WindowDragStrip />
         <div className="max-w-[520px] rounded-2xl border border-hairline/40 bg-card p-6 text-center">
-          <h1 className="text-[20px] font-semibold text-ink">The host needs an agent engine</h1>
+          <h1 className="text-[20px] font-semibold text-ink">{t("noEngines.title")}</h1>
           <p className="mt-2 text-[13.5px] leading-relaxed text-ink-secondary">
             Configure Claude, ACP, or another supported engine in OpenMausBot on the host computer, then return here.
           </p>

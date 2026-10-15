@@ -1,3 +1,5 @@
+import { t } from "@/lib/i18n";
+
 import { normalizeCronSchedule, nextCronRuns, type RoutineCronSchedule } from "../../../shared/routine-schedule";
 
 export type CronChoice = "monthly" | "yearly" | "cron";
@@ -41,7 +43,7 @@ export function cronDraftFor(schedule: RoutineCronSchedule | undefined, at: numb
 
 export function cronEditorValue(choice: CronChoice, draft: CronDraft, after: number, unchanged?: RoutineCronSchedule) {
   try {
-    if (choice !== "cron" && !/^\d{2}:\d{2}$/.test(draft.time)) throw new Error("Choose a time for this routine.");
+    if (choice !== "cron" && !/^\d{2}:\d{2}$/.test(draft.time)) throw new Error(t("cron.chooseTime"));
     const [hour, minute] = draft.time.split(":");
     const proposed: RoutineCronSchedule = unchanged ?? {
       type: "cron", timeZone: draft.timeZone,

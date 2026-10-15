@@ -73,7 +73,7 @@ function CitationEditor({
     <div
       ref={ref}
       role="dialog"
-      aria-label="Comment on citation"
+      aria-label={t("citation.commentOn")}
       className="fixed z-50 w-[min(28rem,calc(100vw-1rem))] rounded-xl border border-hairline/50 bg-panel p-3 text-ink shadow-2xl"
       style={point}
       onKeyDown={(event) => {
@@ -85,7 +85,7 @@ function CitationEditor({
       }}
     >
       <div className="mb-2 max-h-36 overflow-auto rounded-lg border border-hairline/30 bg-inset px-3 py-2">
-        <div className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-ink-secondary">Quoted message</div>
+        <div className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-ink-secondary">{t("citation.quotedMessage")}</div>
         <pre dir="auto" className="whitespace-pre-wrap break-words font-sans text-[12px] leading-relaxed">{citation.quote}</pre>
       </div>
       <textarea
@@ -93,9 +93,9 @@ function CitationEditor({
         dir="auto"
         value={comment}
         rows={3}
-        aria-label="Comment on selected text"
+        aria-label={t("citation.commentAria")}
         aria-invalid={tooLong || undefined}
-        placeholder="Add an optional comment…"
+        placeholder={t("citation.commentPlaceholder")}
         onChange={(event) => setComment(event.target.value)}
         onKeyDown={(event) => {
           if (sendsMessage(event.nativeEvent, sendKey)) {
@@ -105,10 +105,10 @@ function CitationEditor({
         }}
         className="w-full resize-none rounded-lg border border-hairline/40 bg-inset px-3 py-2 text-[13px] outline-none focus:border-accent"
       />
-      {tooLong && <p role="status" className="mt-1 text-[11px] text-danger">Comments can contain up to {CITATION_MAX_COMMENT_LENGTH.toLocaleString()} characters.</p>}
+      {tooLong && <p role="status" className="mt-1 text-[11px] text-danger">{t("citation.commentTooLong", { count: CITATION_MAX_COMMENT_LENGTH.toLocaleString() })}</p>}
       <div className="mt-2 flex justify-end gap-2">
-        <button type="button" onClick={onCancel} className="rounded-lg px-3 py-1.5 text-[12px] text-ink-secondary hover:bg-raised">Cancel</button>
-        <button type="button" disabled={tooLong} onClick={() => onSave(withCitationComment(citation, comment))} className="rounded-lg bg-accent px-3 py-1.5 text-[12px] font-medium text-white disabled:opacity-40">Save</button>
+        <button type="button" onClick={onCancel} className="rounded-lg px-3 py-1.5 text-[12px] text-ink-secondary hover:bg-raised">{t("common.cancel")}</button>
+        <button type="button" disabled={tooLong} onClick={() => onSave(withCitationComment(citation, comment))} className="rounded-lg bg-accent px-3 py-1.5 text-[12px] font-medium text-white disabled:opacity-40">{t("common.save")}</button>
       </div>
     </div>,
     document.body,
@@ -272,19 +272,19 @@ export function CitationBadge({
         type="button"
         onClick={() => { setUnavailable(false); setOpen((value) => !value); }}
         aria-expanded={open}
-        aria-label={`Open citation: ${citation.quote.slice(0, 80)}`}
+        aria-label={t("citation.openAria", { quote: citation.quote.slice(0, 80) })}
         className="inline-flex max-w-64 items-center gap-1.5 rounded-full border border-accent/30 bg-accent/10 px-2.5 py-1 text-[11px] text-accent-text hover:border-accent/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/60"
       >
         <Quote size={11} className="shrink-0" aria-hidden="true" />
         <span className="truncate">{citation.quote.replace(/\s+/g, " ")}</span>
       </button>
       {onRemove && (
-        <button type="button" onClick={onRemove} aria-label="Remove citation" className="flex size-5 items-center justify-center rounded-full text-ink-secondary hover:bg-raised hover:text-ink"><X size={11} /></button>
+        <button type="button" onClick={onRemove} aria-label={t("citation.removeAria")} className="flex size-5 items-center justify-center rounded-full text-ink-secondary hover:bg-raised hover:text-ink"><X size={11} /></button>
       )}
       {open && createPortal(
         <div
           role="dialog"
-          aria-label="Citation details"
+          aria-label={t("citation.details")}
           className="fixed z-50 w-[min(30rem,calc(100vw-1rem))] rounded-xl border border-hairline/50 bg-panel p-3 text-left text-ink shadow-2xl"
           style={point}
           ref={(element) => {
@@ -296,15 +296,15 @@ export function CitationBadge({
           }}
         >
           <div className="max-h-56 overflow-auto rounded-lg bg-inset px-3 py-2">
-            <div className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-ink-secondary">Quoted message</div>
+            <div className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-ink-secondary">{t("citation.quotedMessage")}</div>
             <pre dir="auto" className="whitespace-pre-wrap break-words font-sans text-[12px] leading-relaxed">{citation.quote}</pre>
           </div>
-          {citation.comment && <div className="mt-2 text-[12px]"><span className="font-semibold">Comment:</span> <span className="whitespace-pre-wrap">{citation.comment}</span></div>}
-          {unavailable && <p role="status" className="mt-2 text-[11px] text-warning">Source unavailable or changed. The saved quote is still available.</p>}
+          {citation.comment && <div className="mt-2 text-[12px]"><span className="font-semibold">{t("citation.commentLabel")}</span> <span className="whitespace-pre-wrap">{citation.comment}</span></div>}
+          {unavailable && <p role="status" className="mt-2 text-[11px] text-warning">{t("citation.sourceUnavailable")}</p>}
           <div className="mt-3 flex justify-end gap-2">
-            {onNavigate && <button type="button" onClick={() => { void onNavigate().then((found) => { setUnavailable(!found); if (found) setOpen(false); }); }} className="rounded-lg border border-hairline/40 px-3 py-1.5 text-[12px] hover:bg-raised">Go to source</button>}
-            {onChange && <button type="button" onClick={() => { setOpen(false); setEditing(true); }} className="rounded-lg border border-hairline/40 px-3 py-1.5 text-[12px] hover:bg-raised">Edit comment</button>}
-            <button type="button" onClick={() => { setOpen(false); restoreTriggerFocus(); }} className="rounded-lg bg-accent px-3 py-1.5 text-[12px] text-white">Close</button>
+            {onNavigate && <button type="button" onClick={() => { void onNavigate().then((found) => { setUnavailable(!found); if (found) setOpen(false); }); }} className="rounded-lg border border-hairline/40 px-3 py-1.5 text-[12px] hover:bg-raised">{t("citation.goToSource")}</button>}
+            {onChange && <button type="button" onClick={() => { setOpen(false); setEditing(true); }} className="rounded-lg border border-hairline/40 px-3 py-1.5 text-[12px] hover:bg-raised">{t("citation.editComment")}</button>}
+            <button type="button" onClick={() => { setOpen(false); restoreTriggerFocus(); }} className="rounded-lg bg-accent px-3 py-1.5 text-[12px] text-white">{t("common.close")}</button>
           </div>
         </div>,
         document.body,

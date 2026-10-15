@@ -352,29 +352,29 @@ export function CodeBlock({ code, lang }: CodeBlockProps) {
                 ? "bg-accent/15 text-accent font-medium"
                 : "text-ink-secondary hover:bg-raised hover:text-ink"
             }`}
-            title={wrapLines ? "Disable line wrapping" : "Wrap long lines"}
-            aria-label={wrapLines ? "Disable line wrapping" : "Wrap long lines"}
+            title={wrapLines ? t("chat.code.disableWrap") : t("chat.code.wrapLong")}
+            aria-label={wrapLines ? t("chat.code.disableWrap") : t("chat.code.wrapLong")}
             aria-pressed={wrapLines}
           >
             <WrapText size={12} aria-hidden="true" />
-            <span className="hidden sm:inline">{wrapLines ? "Unwrap" : "Wrap"}</span>
+            <span className="hidden sm:inline">{wrapLines ? t("chat.code.unwrap") : t("chat.code.wrap")}</span>
           </button>
           <button
             type="button"
             onClick={download}
             className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[11px] text-ink-secondary hover:bg-raised hover:text-ink transition-colors"
-            title="Download snippet as file"
-            aria-label="Download snippet as file"
+            title={t("chat.code.downloadSnippet")}
+            aria-label={t("chat.code.downloadSnippet")}
           >
             <Download size={12} aria-hidden="true" />
-            <span className="hidden sm:inline">Save</span>
+            <span className="hidden sm:inline">{t("common.save")}</span>
           </button>
           <button
             type="button"
             onClick={copy}
             className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[11px] text-ink-secondary hover:bg-raised hover:text-ink transition-colors"
-            title={copied === "copied" ? "Copied to clipboard" : copied === "failed" ? t("common.copyFailed") : "Copy code"}
-            aria-label={copied === "copied" ? "Code copied to clipboard" : copied === "failed" ? t("common.copyFailed") : "Copy code to clipboard"}
+            title={copied === "copied" ? t("chat.code.copied") : copied === "failed" ? t("common.copyFailed") : t("chat.code.copy")}
+            aria-label={copied === "copied" ? t("chat.code.copiedAria") : copied === "failed" ? t("common.copyFailed") : t("chat.code.copyAria")}
           >
             {copied === "failed" ? (
               <>
@@ -384,12 +384,12 @@ export function CodeBlock({ code, lang }: CodeBlockProps) {
             ) : copied === "copied" ? (
               <>
                 <Check size={12} className="text-success" aria-hidden="true" />
-                <span className="text-success font-medium hidden sm:inline">Copied!</span>
+                <span className="text-success font-medium hidden sm:inline">{t("chat.copied")}</span>
               </>
             ) : (
               <>
                 <Copy size={12} aria-hidden="true" />
-                <span className="hidden sm:inline">Copy</span>
+                <span className="hidden sm:inline">{t("engineSetup.copy")}</span>
               </>
             )}
           </button>
@@ -499,8 +499,8 @@ export function MermaidDiagram({ code }: MermaidDiagramProps) {
   return (
     <div ref={frame} dir="ltr" className="my-2 overflow-hidden rounded-lg border border-hairline/40 bg-inset">
       <div className="flex items-center justify-between gap-2 border-b border-hairline/30 bg-raised/30 px-3 py-1.5 text-xs">
-        <span title="Mermaid diagram" className="min-w-0 truncate rounded border border-hairline/40 bg-raised px-1.5 py-0.5 text-[11px] font-medium tracking-wide text-ink select-none">
-          Mermaid diagram
+        <span title={t("chat.diagram.title")} className="min-w-0 truncate rounded border border-hairline/40 bg-raised px-1.5 py-0.5 text-[11px] font-medium tracking-wide text-ink select-none">
+          {t("chat.diagram.title")}
         </span>
         <div className="flex shrink-0 items-center gap-1 whitespace-nowrap">
           <button
@@ -511,19 +511,19 @@ export function MermaidDiagram({ code }: MermaidDiagramProps) {
                 ? "bg-accent/15 text-accent font-medium"
                 : "text-ink-secondary hover:bg-raised hover:text-ink"
             }`}
-            title={showSource ? "Hide diagram source" : "Show diagram source"}
-            aria-label={showSource ? "Hide diagram source" : "Show diagram source"}
+            title={showSource ? t("chat.diagram.hideSource") : t("chat.diagram.showSource")}
+            aria-label={showSource ? t("chat.diagram.hideSource") : t("chat.diagram.showSource")}
             aria-pressed={showSource}
           >
             <WrapText size={12} aria-hidden="true" />
-            <span className="hidden sm:inline">{showSource ? "Hide source" : "Show source"}</span>
+            <span className="hidden sm:inline">{showSource ? t("chat.diagram.hideShort") : t("chat.diagram.showShort")}</span>
           </button>
           <button
             type="button"
             onClick={copy}
             className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[11px] text-ink-secondary hover:bg-raised hover:text-ink transition-colors"
-            title={copied === "copied" ? "Copied to clipboard" : copied === "failed" ? t("common.copyFailed") : "Copy diagram source"}
-            aria-label={copied === "copied" ? "Diagram source copied to clipboard" : copied === "failed" ? t("common.copyFailed") : "Copy diagram source to clipboard"}
+            title={copied === "copied" ? t("chat.code.copied") : copied === "failed" ? t("common.copyFailed") : t("chat.diagram.copy")}
+            aria-label={copied === "copied" ? t("chat.diagram.copiedAria") : copied === "failed" ? t("common.copyFailed") : t("chat.diagram.copyAria")}
           >
             {copied === "failed" ? (
               <>
@@ -533,12 +533,12 @@ export function MermaidDiagram({ code }: MermaidDiagramProps) {
             ) : copied === "copied" ? (
               <>
                 <Check size={12} className="text-success" aria-hidden="true" />
-                <span className="text-success font-medium hidden sm:inline">Copied!</span>
+                <span className="text-success font-medium hidden sm:inline">{t("chat.copied")}</span>
               </>
             ) : (
               <>
                 <Copy size={12} aria-hidden="true" />
-                <span className="hidden sm:inline">Copy</span>
+                <span className="hidden sm:inline">{t("engineSetup.copy")}</span>
               </>
             )}
           </button>
@@ -546,7 +546,7 @@ export function MermaidDiagram({ code }: MermaidDiagramProps) {
       </div>
       {error && (
         <p role="alert" className="px-3 pt-2 text-[12px] text-danger">
-          Diagram could not be rendered: {error}
+          {t("chat.diagram.error", { message: error })}
         </p>
       )}
       {markup && (
@@ -567,14 +567,14 @@ export function MermaidDiagram({ code }: MermaidDiagramProps) {
 function LocalFileLink({ filePath, name, children, message }: { filePath: string; name?: string; children?: ReactNode; message?: MessageAttachmentContext }) {
   const save = useLocalFileSave(filePath, name, message);
   if (!message) {
-    return <span title="Unavailable legacy file reference" className="break-words text-ink-secondary">{children}</span>;
+    return <span title={t("chat.file.legacyUnavailable")} className="break-words text-ink-secondary">{children}</span>;
   }
   const label = save.state === "saving"
-    ? "Saving…"
+    ? t("settings.profile.saving")
     : save.state === "saved"
-      ? "Saved"
+      ? t("settings.profile.saved")
       : save.state === "failed"
-        ? "Retry"
+        ? t("chat.retry")
         : null;
 
   return (
@@ -584,7 +584,7 @@ function LocalFileLink({ filePath, name, children, message }: { filePath: string
         type="button"
         onClick={() => void save.save()}
         disabled={save.state === "saving"}
-        title="Save a copy"
+        title={t("chat.file.saveCopy")}
         className="inline-flex items-center gap-1 break-words text-start text-accent underline decoration-accent/40 hover:decoration-accent disabled:cursor-wait"
       >
         {children}
@@ -626,7 +626,7 @@ export function markdownImageName(src: string, alt?: string): string {
     if (name) return name;
   } catch {
   }
-  return "Image";
+  return t("attach.image");
 }
 
 export function markdownImageOpenUrl(src: string): string | undefined {
@@ -651,8 +651,8 @@ function Spoiler({ children }: { children?: ReactNode }) {
         </span>
         <button
           type="button"
-          aria-label="Reveal spoiler"
-          title="Reveal spoiler"
+          aria-label={t("chat.spoiler.reveal")}
+          title={t("chat.spoiler.reveal")}
           onClick={() => setRevealed(true)}
           className="absolute inset-0 rounded bg-raised/90"
         />
@@ -664,12 +664,12 @@ function Spoiler({ children }: { children?: ReactNode }) {
       {children}
       <button
         type="button"
-        aria-label="Hide spoiler"
-        title="Hide spoiler"
+        aria-label={t("chat.spoiler.hide")}
+        title={t("chat.spoiler.hide")}
         onClick={() => setRevealed(false)}
         className="ms-1 rounded px-0.5 text-[11px] text-ink-secondary hover:text-ink"
       >
-        Hide
+        {t("chat.spoiler.hideShort")}
       </button>
     </span>
   );

@@ -5,10 +5,10 @@ import {
   attachmentImageUrl,
   intakeFiles,
   formatSize,
-  pasteSummary,
   type Attachment,
   type PasteAttachment,
 } from "@/lib/composer-attachments";
+import { t } from "@/lib/i18n";
 import { AttachmentPreviewDialog, previewImage, type PreviewImage } from "./AttachmentPreview";
 
 /** Electron 32 removed File.path — only the preload can name a file. */
@@ -101,7 +101,7 @@ export function ComposerAttachments({
       {dragging && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-10">
           <div className="rounded-2xl border-2 border-dashed border-accent/70 bg-panel/90 px-8 py-6 text-[14px] font-medium text-ink shadow-2xl">
-            Drop to attach
+            {t("composer.dropToAttach")}
           </div>
         </div>
       )}
@@ -111,7 +111,7 @@ export function ComposerAttachments({
           <span className="min-w-0 flex-1">{notice}</span>
           <button
             onClick={() => onNotice(null)}
-            aria-label="Dismiss"
+            aria-label={t("composer.failed.dismiss")}
             className="shrink-0 rounded p-0.5"
           >
             <X size={12} />
@@ -135,16 +135,16 @@ export function ComposerAttachments({
                   </pre>
                   <div className="pointer-events-none absolute inset-x-0 bottom-0 h-8 bg-gradient-to-b from-transparent to-raised" />
                 </div>
-                <div className="mt-1 text-[10.5px] text-ink-tertiary">{pasteSummary(a)}</div>
+                <div className="mt-1 text-[10.5px] text-ink-tertiary">{t("composer.pasteSummary", { lines: a.lines, size: formatSize(a.size) })}</div>
                 <button
                   type="button"
                   onClick={() => onDisplayInChatBox(a)}
                   className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-lg border border-accent/25 bg-accent/5 px-2 py-1.5 text-[10.5px] font-medium text-accent-text transition-colors hover:border-accent/50 hover:bg-accent/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/60"
-                  aria-label="Display pasted text in chat box"
-                  title="Display in chat box"
+                  aria-label={t("composer.displayAria")}
+                  title={t("composer.display")}
                 >
                   <MessageSquareText size={12} aria-hidden="true" />
-                  <span>Display in chat box</span>
+                  <span>{t("composer.display")}</span>
                 </button>
               </Chip>
             ) : a.kind === "image" ? (
@@ -159,7 +159,7 @@ export function ComposerAttachments({
                   disabled={!attachmentImageUrl(a.path) && !a.previewUrl}
                   aria-busy={a.uploading || undefined}
                   className="relative flex h-[76px] w-full items-center justify-center overflow-hidden rounded-lg bg-inset focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 disabled:cursor-default"
-                  aria-label={`Preview ${a.name}`}
+                  aria-label={t("attach.previewAria", { name: a.name })}
                 >
                   <img
                     src={attachmentImageUrl(a.path) ?? a.previewUrl}
@@ -175,7 +175,7 @@ export function ComposerAttachments({
                   )}
                 </button>
                 <div className="mt-1 truncate text-[10.5px] text-ink-tertiary">
-                  {a.uploading ? "Uploading…" : formatSize(a.size)}
+                  {a.uploading ? t("composer.uploading") : formatSize(a.size)}
                 </div>
               </Chip>
             ) : (
@@ -209,6 +209,7 @@ function Chip({
   onRemove: () => void;
 }) {
   const Icon = label === "PASTED" ? ClipboardPaste : label === "IMAGE" ? ImageIcon : FileIcon;
+  const labelText = label === "PASTED" ? t("composer.chip.pasted") : label === "IMAGE" ? t("composer.chip.image") : t("composer.chip.file");
   return (
     <div
       title={title}
@@ -221,13 +222,13 @@ function Chip({
       <div className="mt-1 flex items-center gap-1">
         <Icon size={11} className="text-ink-tertiary" />
         <span className="rounded border border-hairline/60 px-1 py-px text-[9.5px] font-medium tracking-wide text-ink-secondary">
-          {label}
+          {labelText}
         </span>
       </div>
       {/* Not `hidden`: that would take the only way to remove a chip out of the keyboard's reach. */}
       <button
         onClick={onRemove}
-        aria-label={`Remove ${label === "PASTED" ? "pasted text" : "file"}`}
+        aria-label={label === "PASTED" ? t("composer.removePasted") : t("composer.removeFile")}
         className="absolute -right-1.5 -top-1.5 flex size-5 items-center justify-center rounded-full border border-hairline/60 bg-panel text-ink-secondary opacity-0 transition-opacity hover:text-ink focus-visible:opacity-100 group-hover:opacity-100 touch:opacity-100"
       >
         <X size={11} />

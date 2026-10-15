@@ -1325,7 +1325,7 @@ export function ComputerPanel({
               <Settings size={18} />
             </button>
           )}
-          <div className="mx-9 flex min-w-0 gap-0.5 overflow-x-auto rounded-full bg-inset p-0.5 [scrollbar-width:none]" data-tour="computer-tabs" data-testid="computer-tabs" aria-label="Bot panel view">
+          <div className="mx-9 flex min-w-0 gap-0.5 overflow-x-auto rounded-full bg-inset p-0.5 [scrollbar-width:none]" data-tour="computer-tabs" data-testid="computer-tabs" aria-label={t("desktopViewer.panelViewAria")}>
             <button
               onClick={() => selectPanelView("computer")}
               aria-pressed={panelView === "computer"}

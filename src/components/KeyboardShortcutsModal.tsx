@@ -9,6 +9,7 @@ import {
   type ShortcutItem,
 } from "@/lib/keyboard-shortcuts";
 import { useSendKey } from "@/lib/send-key";
+import { t } from "@/lib/i18n";
 
 export interface KeyboardShortcutsModalProps {
   open: boolean;
@@ -75,17 +76,17 @@ export function KeyboardShortcutsModal({ open, onClose }: KeyboardShortcutsModal
             </span>
             <div>
               <h2 id="shortcuts-dialog-title" className="text-[16px] font-semibold text-ink">
-                Keyboard Shortcuts
+                {t("shortcuts.title")}
               </h2>
               <p className="text-[12px] text-ink-secondary">
-                Quick commands and navigation
+                {t("shortcuts.subtitle")}
               </p>
             </div>
           </div>
           <button
             type="button"
             onClick={onClose}
-            aria-label="Close keyboard shortcuts"
+            aria-label={t("shortcuts.close")}
             className="rounded-lg p-1.5 text-ink-secondary hover:bg-raised hover:text-ink"
           >
             <X size={18} />
@@ -99,8 +100,8 @@ export function KeyboardShortcutsModal({ open, onClose }: KeyboardShortcutsModal
               ref={inputRef}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search shortcuts…"
-              aria-label="Search shortcuts"
+              placeholder={t("shortcuts.searchPlaceholder")}
+              aria-label={t("shortcuts.searchAria")}
               className="w-full bg-transparent text-[13px] text-ink placeholder:text-ink-secondary focus:outline-none"
             />
           </div>
@@ -109,7 +110,7 @@ export function KeyboardShortcutsModal({ open, onClose }: KeyboardShortcutsModal
         <div className="flex-1 overflow-y-auto px-5 py-3 space-y-4">
           {groups.length === 0 ? (
             <div className="py-8 text-center text-[13px] text-ink-secondary">
-              No shortcuts found for “{query}”
+              {t("shortcuts.noResults", { query })}
             </div>
           ) : (
             groups.map((group) => (
@@ -129,14 +130,14 @@ export function KeyboardShortcutsModal({ open, onClose }: KeyboardShortcutsModal
 
         <div className="flex items-center justify-between border-t border-hairline/40 bg-card/30 px-5 py-2.5 text-[11.5px] text-ink-secondary">
           <span>
-            Press <kbd className="rounded bg-control px-1 py-0.5 font-mono text-[10.5px]">?</kbd> when not typing to open
+            {t("shortcuts.press")} <kbd className="rounded bg-control px-1 py-0.5 font-mono text-[10.5px]">?</kbd> {t("shortcuts.toOpen")}
           </span>
           <button
             type="button"
             onClick={onClose}
             className="ui-button ui-button-md"
           >
-            Done
+            {t("signIn.done")}
           </button>
         </div>
       </div>

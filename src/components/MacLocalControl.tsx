@@ -63,7 +63,7 @@ export function MacLocalControl() {
       <div className="flex items-start gap-3">
         <Shield size={16} className="mt-0.5 shrink-0 text-warning" />
         <div className="min-w-0 flex-1">
-          <div className="text-[14px] font-medium text-ink">Allow control of this computer</div>
+          <div className="text-[14px] font-medium text-ink">{t("computer.mac.allowControl")}</div>
           <p className="mt-1 text-[12.5px] leading-relaxed text-ink-secondary">
             {permissionMessage ?? t("computer.mac.permission.generic")}
           </p>

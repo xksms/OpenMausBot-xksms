@@ -1,5 +1,6 @@
 // Audio comes from the harness, which holds the voice keys: the renderer never sees them or calls a voice provider.
 
+import { t } from "@/lib/i18n";
 import { localSystemVoiceActive, remoteSystemVoice, resolveLocalSystemVoice } from "@/lib/local-voice";
 
 export type SpeechStatus = "idle" | "preparing" | "speaking";
@@ -151,7 +152,7 @@ export class Speaker {
       this.set({ status: "speaking", botId: opts.botId, messageId: opts.messageId, caption: utterances[i] });
       const finished = await this.play(rendered.blob, live);
       if (!finished || !live()) {
-        if (live()) this.set({ ...IDLE, error: "The generated voice clip couldn't be played." });
+        if (live()) this.set({ ...IDLE, error: t("voice.clipFailed") });
         if (this.request === controller) this.request = null;
         return;
       }
@@ -204,12 +205,12 @@ export class Speaker {
       utterance.onend = () => finish(true);
       utterance.onerror = (event) => {
         const interrupted = event.error === "canceled" || event.error === "interrupted";
-        finish(false, interrupted ? undefined : "This Mac could not play its selected voice.");
+        finish(false, interrupted ? undefined : t("voice.localPlayFailed"));
       };
       try {
         synth.speak(utterance);
       } catch {
-        finish(false, "This Mac could not start its selected voice.");
+        finish(false, t("voice.localStartFailed"));
       }
     });
   }
@@ -222,9 +223,9 @@ export class Speaker {
       signal,
     });
     const body: TtsPrepareBody = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(body.error ?? `the voice service returned ${res.status}`);
+    if (!res.ok) throw new Error(body.error ?? t("voice.serviceStatus", { status: res.status }));
     if (!body.ready) {
-      throw new Error("Set up a voice provider in an agent profile on this computer, then pick a voice for the agent.");
+      throw new Error(t("voice.notConfigured"));
     }
     return body.utterances ?? [];
   }
@@ -238,7 +239,7 @@ export class Speaker {
     });
     if (!res.ok) {
       const body: TtsErrorBody = await res.json().catch(() => ({}));
-      throw new Error(body.error ?? `the voice service returned ${res.status}`);
+      throw new Error(body.error ?? t("voice.serviceStatus", { status: res.status }));
     }
     return res.blob();
   }

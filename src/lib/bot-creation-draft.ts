@@ -1,5 +1,7 @@
+import { t } from "@/lib/i18n";
 import type { NewBotDefaults, BotDefaultsProfile, BotRoutineTemplate } from "../../shared/new-bot-defaults";
 import { api, type Bot, type ModelSelection } from "@/state/store";
+
 import type { BotUpdatePatch } from "@/state/bot-patch-queue";
 import type { Routine, RoutineInput } from "./routines";
 import type { ChosenPreset } from "./bot-presets";
@@ -74,8 +76,8 @@ export class BotCreationDraft {
   export(): NewBotDefaults { return structuredClone({ ...this.template, routines: this.routines.map(routineTemplate) }); }
 
   uploadAvatar = async (file: File): Promise<string> => {
-    if (!["image/png", "image/jpeg", "image/gif", "image/webp"].includes(file.type)) throw new Error("Choose a PNG, JPEG, GIF, or WebP image");
-    if (file.size > 10 * 1024 * 1024) throw new Error("Choose an image smaller than 10 MiB");
+    if (!["image/png", "image/jpeg", "image/gif", "image/webp"].includes(file.type)) throw new Error(t("botAvatar.pickImage"));
+    if (file.size > 10 * 1024 * 1024) throw new Error(t("botAvatar.imageTooLarge"));
     if (this.avatarObjectUrl) URL.revokeObjectURL(this.avatarObjectUrl);
     this.avatarFile = file;
     this.avatarObjectUrl = URL.createObjectURL(file);

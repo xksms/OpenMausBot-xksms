@@ -3,6 +3,7 @@ import { track } from "@/lib/analytics";
 import { useStore, type Group } from "@/state/store";
 import { BotPickerList } from "./BotPickerList";
 import { nextMemberIds } from "@/lib/room-members";
+import { t } from "@/lib/i18n";
 
 export function ManageMembersPanel({
   group,
@@ -106,10 +107,10 @@ export function ManageMembersPanel({
         aria-label={`Manage members of ${group.name}`}
         className="w-[340px] rounded-2xl border border-hairline/50 bg-card p-4 shadow-2xl"
       >
-        <div className="mb-1 text-[15px] font-semibold text-ink">Manage Members</div>
+        <div className="mb-1 text-[15px] font-semibold text-ink">{t("groupMembers.title")}</div>
         <div className="mb-3 truncate text-[13px] text-ink-secondary">{group.name}</div>
-        <BotPickerList bots={bots} picked={picked} onToggle={toggle} emptyHint="Create a bot first — groups are made of bots." />
-        {!memberIds.length && <div className="mt-2 text-[12px] text-ink-secondary">A group needs at least one bot.</div>}
+        <BotPickerList bots={bots} picked={picked} onToggle={toggle} emptyHint={t("groupMembers.emptyHint")} />
+        {!memberIds.length && <div className="mt-2 text-[12px] text-ink-secondary">{t("groupMembers.needOneBot")}</div>}
         {saveError && (
           <div role="alert" className="mt-2 text-[12px] text-danger">
             {saveError}

@@ -1,6 +1,8 @@
+import { t } from "@/lib/i18n";
 // Rows are `display: contents` wrappers with no box, so their last child is what gets scrolled and highlighted.
 import { useEffect } from "react";
 import { api, useStore, type Action, type AppState } from "@/state/store";
+
 import type { SearchHit } from "@/lib/search-hit";
 
 const FLASH_CLASSES = ["ring-2", "ring-accent/70", "rounded-2xl", "transition-shadow"];
@@ -14,7 +16,7 @@ export async function landOnSearchHit(
   const ownerId = hit.botId ?? hit.groupId;
   const bot = hit.botId ? state.bots.find((candidate) => candidate.id === hit.botId) : undefined;
   const group = hit.groupId ? state.groups.find((candidate) => candidate.id === hit.groupId) : undefined;
-  if (!ownerId || (!bot && !group)) throw new Error("That conversation is no longer available.");
+  if (!ownerId || (!bot && !group)) throw new Error(t("thread.conversationGone"));
 
   const switchAlone = bot && bot.threadId !== hit.threadId && !threadsShown ? bot : undefined;
   if (!switchAlone) dispatch({ type: "select", id: ownerId });

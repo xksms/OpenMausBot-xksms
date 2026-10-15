@@ -602,7 +602,7 @@ export function AttachmentPreviewDialog({
           {failed ? (
             <div className="flex flex-col items-center gap-3 text-white/60" role="alert">
               <ImageOff size={34} />
-              <span className="text-[13px]">This image could not be loaded.</span>
+              <span className="text-[13px]">{t("attach.imageFailed")}</span>
               <button
                 type="button"
                 onClick={retry}
