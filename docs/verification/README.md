@@ -117,6 +117,13 @@ The [Connected Apps OAuth fixture](connected-apps-oauth.md) checks blocked-popup
 recovery, safe authorization links and abandoned-account retries through real
 renderer components and isolated HTTP routes.
 
+The [Apps category fixture](app-categories.md) mounts the real Apps modal with
+a synthetic catalogue to check Chinese labels, category filtering, and the
+scrollable category menu at desktop and narrow viewport sizes.
+
+The [Apps inventory fixture](app-inventory.md) delays synthetic status replies
+to check cached opening, request reuse, manual refresh, and first-check timeout.
+
 The [desktop server connection smoke](desktop-server-connection.md) mounts the
 real Settings connection component in disposable Electron windows.
 

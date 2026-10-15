@@ -5,6 +5,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import { setLocale, t } from "@/lib/i18n";
 import { locales } from "@/locales";
 import { connectedInventoryCopy, connectorActionLabel } from "@/lib/connector-status";
+import { appBlurb, appCategoryLabel } from "@/lib/app-catalog-copy";
 import { disconnectAccountConfirmation } from "./PluginsPanel";
 import { parseMcpEnvironment } from "./McpServersPanel";
 import { ConnectorCard } from "./ConnectorCard";
@@ -14,6 +15,32 @@ afterEach(() => {
 });
 
 describe("plugins modal translation", () => {
+  it("translates provider category spellings and preserves unknown categories", () => {
+    setLocale("zh");
+    for (const category of ["Developer tools", "developer tools", "DEVELOPER_TOOLS", " developer-tools "]) {
+      expect(appCategoryLabel(category)).toBe("开发工具");
+    }
+    expect(appCategoryLabel("marketing automation")).toBe("营销自动化");
+    expect(appCategoryLabel("model context protocol")).toBe("模型上下文协议（MCP）");
+    expect(appCategoryLabel("artificial intelligence")).toBe("人工智能");
+    expect(appCategoryLabel("images & design")).toBe("图像与设计");
+    expect(appCategoryLabel("security and identity tools")).toBe("安全与身份认证");
+    expect(appCategoryLabel("crm")).toBe("销售与客户管理");
+    expect(appCategoryLabel("Provider's new category")).toBe("Provider's new category");
+  });
+
+  it("localizes known app descriptions and gives unknown apps a Chinese summary", () => {
+    setLocale("zh");
+    expect(appBlurb({ slug: "code_interpreter", blurb: "CodeInterpreter extends Python" })).toBe("运行 Python 代码并分析数据");
+    expect(appBlurb({ slug: "serpapi", blurb: "Search API" })).toBe("搜索网页并获取结果");
+    expect(appBlurb({ slug: "snowflake", blurb: "Cloud data" })).toBe("查询和分析云端数据");
+    expect(appBlurb({ slug: "linkedin", blurb: "Professional network" })).toBe("职业档案与企业信息");
+    expect(appBlurb({ slug: "klaviyo", blurb: "Email marketing" })).toBe("邮件营销与客户管理");
+    expect(appBlurb({ slug: "unknown", blurb: "Provider description" })).toBe("使用此应用提供的工具");
+    setLocale("en");
+    expect(appCategoryLabel("developer tools")).toBe("Developer tools");
+  });
+
   it("translates the account action label in every pack", () => {
     const state = {
       busy: false,

@@ -1,0 +1,1045 @@
+{
+  "categories": [
+    "email",
+    "ai agents",
+    "developer tools",
+    "scheduling & booking",
+    "notes",
+    "documents",
+    "project management",
+    "spreadsheets",
+    "team chat",
+    "team collaboration",
+    "databases",
+    "calendar",
+    "artificial intelligence",
+    "ai chatbots",
+    "social media accounts",
+    "social media marketing",
+    "file management & storage",
+    "crm",
+    "marketing automation",
+    "task management",
+    "productivity",
+    "analytics",
+    "web search & research",
+    "ai web scraping",
+    "web scraping & browser",
+    "video & audio",
+    "online courses",
+    "education",
+    "images & design",
+    "server monitoring",
+    "news & lifestyle",
+    "audio & speech",
+    "video conferencing",
+    "people & contact data",
+    "contact management",
+    "ecommerce",
+    "places & weather",
+    "signatures",
+    "sales & crm",
+    "seo & ai visibility",
+    "marketing",
+    "email newsletters",
+    "phone & sms",
+    "payment processing",
+    "ai meeting assistants",
+    "transcription",
+    "product management",
+    "customer support",
+    "security & identity tools",
+    "business intelligence",
+    "media generation",
+    "ai content generation",
+    "transactional email",
+    "human resources",
+    "hr talent & recruitment",
+    "communication",
+    "ads & conversion",
+    "ai assistants",
+    "it operations",
+    "notifications",
+    "forms & surveys",
+    "website builders",
+    "drip emails",
+    "accounting",
+    "company data",
+    "bookmark managers",
+    "time tracking software",
+    "fundraising",
+    "customer appreciation",
+    "proposal & invoice management",
+    "dashboards",
+    "webinars",
+    "ai models",
+    "ai safety compliance detection",
+    "url shortener",
+    "gaming",
+    "ai sales tools",
+    "ai document extraction",
+    "app builder",
+    "event management",
+    "fitness",
+    "taxes",
+    "internet of things",
+    "model context protocol",
+    "documents & ocr",
+    "call tracking",
+    "lifestyle & entertainment",
+    "commerce",
+    "market data",
+    "content & files",
+    "website & app building",
+    "legal & public records",
+    "developer tools & devops",
+    "reviews",
+    "productivity & project management",
+    "support",
+    "social & creator data",
+    "tag1",
+    "tag2",
+    "video generation",
+    "e-commerce"
+  ],
+  "cards": [
+    {
+      "slug": "gmail",
+      "label": "Gmail",
+      "blurb": "Gmail is Google’s email service, featuring spam protection, search functions, and seamless",
+      "noAuth": false,
+      "categories": [
+        "email"
+      ]
+    },
+    {
+      "slug": "composio",
+      "label": "Composio",
+      "blurb": "Composio enables AI Agents and LLMs to authenticate and integrate with various tools via f",
+      "noAuth": true,
+      "categories": [
+        "ai agents",
+        "developer tools"
+      ]
+    },
+    {
+      "slug": "github",
+      "label": "GitHub",
+      "blurb": "GitHub is a code hosting platform for version control and collaboration, offering Git-base",
+      "noAuth": false,
+      "categories": [
+        "developer tools"
+      ]
+    },
+    {
+      "slug": "googlecalendar",
+      "label": "Google Calendar",
+      "blurb": "Google Calendar is a time management tool providing scheduling features, event reminders, ",
+      "noAuth": false,
+      "categories": [
+        "scheduling & booking"
+      ]
+    },
+    {
+      "slug": "notion",
+      "label": "Notion",
+      "blurb": "Notion centralizes notes, docs, wikis, and tasks in a unified workspace, letting teams bui",
+      "noAuth": false,
+      "categories": [
+        "notes",
+        "documents",
+        "project management"
+      ]
+    },
+    {
+      "slug": "googlesheets",
+      "label": "Google Sheets",
+      "blurb": "Google Sheets is a cloud-based spreadsheet tool enabling real-time collaboration, data ana",
+      "noAuth": false,
+      "categories": [
+        "spreadsheets"
+      ]
+    },
+    {
+      "slug": "slack",
+      "label": "Slack",
+      "blurb": "Slack is a channel-based messaging platform. With Slack, people can work together more eff",
+      "noAuth": false,
+      "categories": [
+        "team chat",
+        "team collaboration"
+      ]
+    },
+    {
+      "slug": "supabase",
+      "label": "Supabase",
+      "blurb": "Supabase is an open-source backend-as-a-service providing a Postgres database, authenticat",
+      "noAuth": false,
+      "categories": [
+        "developer tools",
+        "databases"
+      ]
+    },
+    {
+      "slug": "outlook",
+      "label": "Outlook",
+      "blurb": "Outlook is Microsoft's email and calendaring platform integrating contacts and scheduling,",
+      "noAuth": false,
+      "categories": [
+        "email",
+        "calendar"
+      ]
+    },
+    {
+      "slug": "perplexityai",
+      "label": "Perplexity AI",
+      "blurb": "Perplexity AI provides conversational AI models for generating human-like text responses",
+      "noAuth": false,
+      "categories": [
+        "artificial intelligence",
+        "ai chatbots"
+      ]
+    },
+    {
+      "slug": "twitter",
+      "label": "Twitter",
+      "blurb": "Twitter, Inc. was an American social media company based in San Francisco, California, whi",
+      "noAuth": false,
+      "categories": [
+        "social media accounts",
+        "social media marketing"
+      ]
+    },
+    {
+      "slug": "googledrive",
+      "label": "Google Drive",
+      "blurb": "Google Drive is a cloud storage solution for uploading, sharing, and collaborating on file",
+      "noAuth": false,
+      "categories": [
+        "file management & storage"
+      ]
+    },
+    {
+      "slug": "googledocs",
+      "label": "Google Docs",
+      "blurb": "Google Docs is a cloud-based word processor with real-time collaboration, version history,",
+      "noAuth": false,
+      "categories": [
+        "documents"
+      ]
+    },
+    {
+      "slug": "hubspot",
+      "label": "HubSpot",
+      "blurb": "HubSpot is an inbound marketing, sales, and customer service platform integrating CRM, ema",
+      "noAuth": false,
+      "categories": [
+        "crm",
+        "marketing automation"
+      ]
+    },
+    {
+      "slug": "linear",
+      "label": "Linear",
+      "blurb": "Linear is a streamlined issue tracking and project planning tool for modern teams, featuri",
+      "noAuth": false,
+      "categories": [
+        "project management",
+        "task management"
+      ]
+    },
+    {
+      "slug": "airtable",
+      "label": "Airtable",
+      "blurb": "Airtable merges spreadsheet functionality with database power, enabling teams to organize ",
+      "noAuth": false,
+      "categories": [
+        "productivity",
+        "spreadsheets",
+        "databases"
+      ]
+    },
+    {
+      "slug": "codeinterpreter",
+      "label": "Code Interpreter",
+      "blurb": "CodeInterpreter extends Python-based coding environments with integrated data analysis, en",
+      "noAuth": true,
+      "categories": [
+        "developer tools",
+        "analytics"
+      ]
+    },
+    {
+      "slug": "serpapi",
+      "label": "SerpApi",
+      "blurb": "SerpApi provides a real-time API for structured search engine results, allowing developers",
+      "noAuth": false,
+      "categories": [
+        "web search & research",
+        "analytics",
+        "ai web scraping"
+      ]
+    },
+    {
+      "slug": "jira",
+      "label": "Jira",
+      "blurb": "A tool for bug tracking, issue tracking, and agile project management.",
+      "noAuth": false,
+      "categories": [
+        "project management",
+        "task management"
+      ]
+    },
+    {
+      "slug": "firecrawl",
+      "label": "Firecrawl",
+      "blurb": "Firecrawl automates web crawling and data extraction, enabling organizations to gather con",
+      "noAuth": false,
+      "categories": [
+        "web scraping & browser",
+        "ai web scraping",
+        "developer tools"
+      ]
+    },
+    {
+      "slug": "tavily",
+      "label": "Tavily",
+      "blurb": "Tavily offers search and data retrieval solutions, helping teams quickly locate and filter",
+      "noAuth": false,
+      "categories": [
+        "web search & research",
+        "ai web scraping",
+        "developer tools"
+      ]
+    },
+    {
+      "slug": "youtube",
+      "label": "YouTube",
+      "blurb": "YouTube is a video-sharing platform with user-generated content, live streaming, and monet",
+      "noAuth": false,
+      "categories": [
+        "video & audio",
+        "social media accounts"
+      ]
+    },
+    {
+      "slug": "slackbot",
+      "label": "Slackbot",
+      "blurb": "Slackbot gives agents workspace-wide read access to a Slack workspace on behalf of the ins",
+      "noAuth": false,
+      "categories": [
+        "team chat",
+        "team collaboration"
+      ]
+    },
+    {
+      "slug": "canvas",
+      "label": "Canvas",
+      "blurb": "Canvas is a learning management system supporting online courses, assignments, grading, an",
+      "noAuth": false,
+      "categories": [
+        "online courses",
+        "education"
+      ]
+    },
+    {
+      "slug": "bitbucket",
+      "label": "Bitbucket",
+      "blurb": "Bitbucket is a Git-based code hosting and collaboration platform supporting private and pu",
+      "noAuth": false,
+      "categories": [
+        "developer tools"
+      ]
+    },
+    {
+      "slug": "googletasks",
+      "label": "Google Tasks",
+      "blurb": "Google Tasks provides a simple to-do list and task management system integrated into Gmail",
+      "noAuth": false,
+      "categories": [
+        "task management"
+      ]
+    },
+    {
+      "slug": "discord",
+      "label": "Discord",
+      "blurb": "An instant messaging and VoIP social platform.",
+      "noAuth": false,
+      "categories": [
+        "team chat",
+        "team collaboration"
+      ]
+    },
+    {
+      "slug": "figma",
+      "label": "Figma",
+      "blurb": "A collaborative interface design tool.",
+      "noAuth": false,
+      "categories": [
+        "images & design",
+        "team collaboration"
+      ]
+    },
+    {
+      "slug": "composio_search",
+      "label": "Composio Search",
+      "blurb": "Composio Search provides comprehensive web search across travel (flights, hotels, events),",
+      "noAuth": true,
+      "categories": [
+        "ai agents",
+        "developer tools"
+      ]
+    },
+    {
+      "slug": "reddit",
+      "label": "Reddit",
+      "blurb": "Reddit is a social news platform with user-driven communities (subreddits), offering conte",
+      "noAuth": false,
+      "categories": [
+        "social media accounts",
+        "social media marketing"
+      ]
+    },
+    {
+      "slug": "cal",
+      "label": "Cal",
+      "blurb": "Cal simplifies meeting coordination by providing shareable booking pages, calendar syncing",
+      "noAuth": false,
+      "categories": [
+        "scheduling & booking",
+        "calendar"
+      ]
+    },
+    {
+      "slug": "wrike",
+      "label": "Wrike",
+      "blurb": "Wrike is a project management and collaboration tool offering customizable workflows, Gant",
+      "noAuth": false,
+      "categories": [
+        "project management",
+        "team collaboration"
+      ]
+    },
+    {
+      "slug": "exa",
+      "label": "Exa",
+      "blurb": "Exa focuses on data extraction and search, helping teams gather, analyze, and visualize in",
+      "noAuth": false,
+      "categories": [
+        "web search & research",
+        "ai web scraping",
+        "analytics"
+      ]
+    },
+    {
+      "slug": "sentry",
+      "label": "Sentry",
+      "blurb": "Integrate Sentry to manage your error tracking and monitoring.",
+      "noAuth": false,
+      "categories": [
+        "developer tools",
+        "server monitoring"
+      ]
+    },
+    {
+      "slug": "snowflake",
+      "label": "Snowflake",
+      "blurb": "Snowflake is a cloud-based data warehouse offering elastic scaling, secure data sharing, a",
+      "noAuth": false,
+      "categories": [
+        "databases",
+        "analytics"
+      ]
+    },
+    {
+      "slug": "hackernews",
+      "label": "Hacker News",
+      "blurb": "Hacker News is a tech-focused news aggregator by Y Combinator, featuring user-submitted st",
+      "noAuth": true,
+      "categories": [
+        "news & lifestyle"
+      ]
+    },
+    {
+      "slug": "elevenlabs",
+      "label": "ElevenLabs",
+      "blurb": "Create natural AI voices instantly in any language - perfect for video creators, developer",
+      "noAuth": false,
+      "categories": [
+        "audio & speech",
+        "artificial intelligence",
+        "video & audio"
+      ]
+    },
+    {
+      "slug": "microsoft_teams",
+      "label": "Microsoft Teams",
+      "blurb": "Microsoft Teams integrates chat, video meetings, and file storage within Microsoft 365, pr",
+      "noAuth": false,
+      "categories": [
+        "team chat",
+        "team collaboration",
+        "video conferencing"
+      ]
+    },
+    {
+      "slug": "asana",
+      "label": "Asana",
+      "blurb": "Tool to help teams organize, track, and manage their work.",
+      "noAuth": false,
+      "categories": [
+        "project management",
+        "task management"
+      ]
+    },
+    {
+      "slug": "peopledatalabs",
+      "label": "People Data Labs",
+      "blurb": "PeopleDataLabs provides B2B data enrichment and identity resolution, empowering organizati",
+      "noAuth": false,
+      "categories": [
+        "people & contact data",
+        "analytics",
+        "contact management"
+      ]
+    },
+    {
+      "slug": "shopify",
+      "label": "Shopify",
+      "blurb": "Shopify is an e-commerce platform. This toolkit is GraphQL-first for new Admin API automat",
+      "noAuth": false,
+      "categories": [
+        "ecommerce"
+      ]
+    },
+    {
+      "slug": "linkedin",
+      "label": "LinkedIn",
+      "blurb": "LinkedIn is a professional networking platform enabling job seekers, companies, and though",
+      "noAuth": false,
+      "categories": [
+        "social media accounts",
+        "marketing automation"
+      ]
+    },
+    {
+      "slug": "google_maps",
+      "label": "Google Maps",
+      "blurb": "Integrate Google Maps to access location data, geocoding, directions, and mapping services",
+      "noAuth": false,
+      "categories": [
+        "places & weather",
+        "developer tools"
+      ]
+    },
+    {
+      "slug": "one_drive",
+      "label": "OneDrive",
+      "blurb": "OneDrive is Microsoft’s cloud storage solution enabling users to store, sync, and share fi",
+      "noAuth": false,
+      "categories": [
+        "file management & storage"
+      ]
+    },
+    {
+      "slug": "docusign",
+      "label": "DocuSign",
+      "blurb": "DocuSign provides eSignature and digital agreement solutions, enabling businesses to send,",
+      "noAuth": false,
+      "categories": [
+        "signatures",
+        "documents"
+      ]
+    },
+    {
+      "slug": "discordbot",
+      "label": "Discord Bot",
+      "blurb": "Discordbot refers to automated programs on Discord servers, performing tasks like moderati",
+      "noAuth": false,
+      "categories": [
+        "team chat",
+        "team collaboration"
+      ]
+    },
+    {
+      "slug": "salesforce",
+      "label": "Salesforce",
+      "blurb": "Salesforce is a leading CRM platform integrating sales, service, marketing, and analytics ",
+      "noAuth": false,
+      "categories": [
+        "crm",
+        "contact management"
+      ]
+    },
+    {
+      "slug": "calendly",
+      "label": "Calendly",
+      "blurb": "Calendly is an appointment scheduling tool that automates meeting invitations, availabilit",
+      "noAuth": false,
+      "categories": [
+        "scheduling & booking",
+        "calendar"
+      ]
+    },
+    {
+      "slug": "trello",
+      "label": "Trello",
+      "blurb": "A web-based, kanban-style, list-making application.",
+      "noAuth": false,
+      "categories": [
+        "project management",
+        "task management"
+      ]
+    },
+    {
+      "slug": "apollo",
+      "label": "Apollo",
+      "blurb": "Apollo provides CRM and lead generation capabilities, helping businesses discover contacts",
+      "noAuth": false,
+      "categories": [
+        "people & contact data",
+        "crm",
+        "sales & crm"
+      ]
+    },
+    {
+      "slug": "semrush",
+      "label": "Semrush",
+      "blurb": "Semrush is a popular SEO tool suite that specializes in keyword research, competitor analy",
+      "noAuth": false,
+      "categories": [
+        "seo & ai visibility",
+        "marketing",
+        "analytics"
+      ]
+    },
+    {
+      "slug": "mem0",
+      "label": "Mem0",
+      "blurb": "Mem0 is an universal, self-improving memory layer for LLM applications.",
+      "noAuth": false,
+      "categories": [
+        "artificial intelligence",
+        "ai agents"
+      ]
+    },
+    {
+      "slug": "neon",
+      "label": "Neon",
+      "blurb": "Postgres, on a serverless platform designed to help you build reliable and scalable applic",
+      "noAuth": false,
+      "categories": [
+        "databases",
+        "developer tools"
+      ]
+    },
+    {
+      "slug": "weathermap",
+      "label": "OpenWeatherMap",
+      "blurb": "WeatherMap provides visual weather data, forecasts, and mappings, helping users understand",
+      "noAuth": true,
+      "categories": [
+        "places & weather",
+        "developer tools"
+      ]
+    },
+    {
+      "slug": "posthog",
+      "label": "PostHog",
+      "blurb": "PostHog is an open-source product analytics platform tracking user interactions and behavi",
+      "noAuth": false,
+      "categories": [
+        "analytics"
+      ]
+    },
+    {
+      "slug": "clickup",
+      "label": "ClickUp",
+      "blurb": "ClickUp unifies tasks, docs, goals, and chat in a single platform, allowing teams to plan,",
+      "noAuth": false,
+      "categories": [
+        "productivity",
+        "project management",
+        "task management"
+      ]
+    },
+    {
+      "slug": "brevo",
+      "label": "Brevo",
+      "blurb": "Brevo (formerly Sendinblue) is an all-in-one email and SMS marketing platform that provide",
+      "noAuth": false,
+      "categories": [
+        "email newsletters",
+        "marketing automation",
+        "phone & sms"
+      ]
+    },
+    {
+      "slug": "stripe",
+      "label": "Stripe",
+      "blurb": "Stripe offers online payment infrastructure, fraud prevention, and APIs enabling businesse",
+      "noAuth": false,
+      "categories": [
+        "payment processing",
+        "ecommerce"
+      ]
+    },
+    {
+      "slug": "klaviyo",
+      "label": "Klaviyo",
+      "blurb": "Klaviyo is a data-driven email and SMS marketing platform that allows e-commerce brands to",
+      "noAuth": false,
+      "categories": [
+        "marketing automation",
+        "email newsletters"
+      ]
+    },
+    {
+      "slug": "browserbase_tool",
+      "label": "Browserbase",
+      "blurb": "Browserbase is a serverless platform that enables developers to run, manage, and monitor h",
+      "noAuth": false,
+      "categories": [
+        "web scraping & browser",
+        "developer tools",
+        "ai agents"
+      ]
+    },
+    {
+      "slug": "mailchimp",
+      "label": "Mailchimp",
+      "blurb": "Mailchimp is an email marketing and automation platform providing campaign templates, audi",
+      "noAuth": false,
+      "categories": [
+        "email newsletters",
+        "marketing automation"
+      ]
+    },
+    {
+      "slug": "attio",
+      "label": "Attio",
+      "blurb": "Attio is a fully customizable workspace for your team's relationships and workflows.",
+      "noAuth": false,
+      "categories": [
+        "crm"
+      ]
+    },
+    {
+      "slug": "googlemeet",
+      "label": "Google Meet",
+      "blurb": "Google Meet is a secure video conferencing platform that integrates with Google Workspace,",
+      "noAuth": false,
+      "categories": [
+        "video conferencing"
+      ]
+    },
+    {
+      "slug": "text_to_pdf",
+      "label": "Text to PDF",
+      "blurb": "Convert text to PDF",
+      "noAuth": true,
+      "categories": [
+        "documents"
+      ]
+    },
+    {
+      "slug": "zoho",
+      "label": "Zoho",
+      "blurb": "Zoho is a suite of cloud applications including CRM, email marketing, and collaboration to",
+      "noAuth": false,
+      "categories": [
+        "crm",
+        "marketing automation"
+      ]
+    },
+    {
+      "slug": "fireflies",
+      "label": "Fireflies",
+      "blurb": "Fireflies.ai helps your team transcribe, summarize, search, and analyze voice conversation",
+      "noAuth": false,
+      "categories": [
+        "ai meeting assistants",
+        "transcription"
+      ]
+    },
+    {
+      "slug": "dropbox",
+      "label": "Dropbox",
+      "blurb": "Dropbox is a cloud storage service offering file syncing, sharing, and collaboration acros",
+      "noAuth": false,
+      "categories": [
+        "file management & storage"
+      ]
+    },
+    {
+      "slug": "shortcut",
+      "label": "Shortcut",
+      "blurb": "Shortcut aligns product development work with company objectives so teams can execute with",
+      "noAuth": false,
+      "categories": [
+        "project management",
+        "product management"
+      ]
+    },
+    {
+      "slug": "confluence",
+      "label": "Confluence",
+      "blurb": "A tool for team collaboration and knowledge management.",
+      "noAuth": false,
+      "categories": [
+        "team collaboration",
+        "documents"
+      ]
+    },
+    {
+      "slug": "freshdesk",
+      "label": "Freshdesk",
+      "blurb": "Freshdesk provides customer support software with ticketing, knowledge base, and automatio",
+      "noAuth": false,
+      "categories": [
+        "crm",
+        "customer support"
+      ]
+    },
+    {
+      "slug": "borneo",
+      "label": "Borneo",
+      "blurb": "Borneo is a data security and privacy platform designed for sensitive data discovery and r",
+      "noAuth": false,
+      "categories": [
+        "security & identity tools"
+      ]
+    },
+    {
+      "slug": "mixpanel",
+      "label": "Mixpanel",
+      "blurb": "Mixpanel is a product analytics platform tracking user interactions and engagement, provid",
+      "noAuth": false,
+      "categories": [
+        "analytics"
+      ]
+    },
+    {
+      "slug": "coda",
+      "label": "Coda",
+      "blurb": "Collaborative workspace platform that transforms documents into powerful tools for team pr",
+      "noAuth": false,
+      "categories": [
+        "productivity",
+        "project management"
+      ]
+    },
+    {
+      "slug": "acculynx",
+      "label": "Acculynx",
+      "blurb": "AccuLynx is the leading, all-in-one roofing software designed to streamline every aspect o",
+      "noAuth": false,
+      "categories": [
+        "crm"
+      ]
+    },
+    {
+      "slug": "ahrefs",
+      "label": "Ahrefs",
+      "blurb": "Ahrefs is an SEO and marketing platform offering site audits, keyword research, content an",
+      "noAuth": false,
+      "categories": [
+        "seo & ai visibility",
+        "marketing automation",
+        "analytics"
+      ]
+    },
+    {
+      "slug": "affinity",
+      "label": "Affinity",
+      "blurb": "Affinity helps private capital investors to find, manage, and close more deals",
+      "noAuth": false,
+      "categories": [
+        "crm"
+      ]
+    },
+    {
+      "slug": "amplitude",
+      "label": "Amplitude",
+      "blurb": "Amplitude gives you the self-serve tools and real-time data to make products and experienc",
+      "noAuth": false,
+      "categories": [
+        "analytics",
+        "business intelligence"
+      ]
+    },
+    {
+      "slug": "heygen",
+      "label": "HeyGen",
+      "blurb": "HeyGen is an innovative video platform that harnesses the power of generative AI to stream",
+      "noAuth": false,
+      "categories": [
+        "media generation",
+        "artificial intelligence",
+        "video & audio",
+        "ai content generation"
+      ]
+    },
+    {
+      "slug": "agencyzoom",
+      "label": "AgencyZoom",
+      "blurb": "AgencyZoom is for the P&C insurance agent that's looking to increase sales, boost retentio",
+      "noAuth": false,
+      "categories": [
+        "crm",
+        "analytics"
+      ]
+    },
+    {
+      "slug": "googlebigquery",
+      "label": "Google BigQuery",
+      "blurb": "Google BigQuery is a fully managed data warehouse for large-scale data analytics, offering",
+      "noAuth": false,
+      "categories": [
+        "databases",
+        "analytics"
+      ]
+    },
+    {
+      "slug": "microsoft_clarity",
+      "label": "Microsoft Clarity",
+      "blurb": "Microsoft Clarity is a free user behavior analytics tool that captures heatmaps, session r",
+      "noAuth": false,
+      "categories": [
+        "analytics"
+      ]
+    },
+    {
+      "slug": "coinbase",
+      "label": "Coinbase",
+      "blurb": "Coinbase is a platform for buying, selling, transferring, and storing cryptocurrency.",
+      "noAuth": false,
+      "categories": [
+        "developer tools",
+        "payment processing"
+      ]
+    },
+    {
+      "slug": "monday",
+      "label": "Monday",
+      "blurb": "monday.com is a customizable work management platform for project planning, collaboration,",
+      "noAuth": false,
+      "categories": [
+        "project management",
+        "task management"
+      ]
+    },
+    {
+      "slug": "semanticscholar",
+      "label": "Semantic Scholar",
+      "blurb": "Semantic Scholar is an AI-powered academic search engine that helps researchers discover a",
+      "noAuth": false,
+      "categories": [
+        "web search & research",
+        "artificial intelligence",
+        "analytics"
+      ]
+    },
+    {
+      "slug": "sendgrid",
+      "label": "SendGrid",
+      "blurb": "SendGrid is a cloud-based email delivery platform providing transactional and marketing em",
+      "noAuth": false,
+      "categories": [
+        "transactional email",
+        "email newsletters"
+      ]
+    },
+    {
+      "slug": "junglescout",
+      "label": "Jungle Scout",
+      "blurb": "Jungle Scout assists Amazon sellers with product research, sales estimates, and competitiv",
+      "noAuth": false,
+      "categories": [
+        "ecommerce",
+        "analytics"
+      ]
+    },
+    {
+      "slug": "pipedrive",
+      "label": "Pipedrive",
+      "blurb": "Pipedrive is a sales management tool built around pipeline visualization, lead tracking, a",
+      "noAuth": false,
+      "categories": [
+        "crm",
+        "sales & crm"
+      ]
+    },
+    {
+      "slug": "bamboohr",
+      "label": "BambooHR",
+      "blurb": "BambooHR is a cloud-based human resources management system (HRMS) that helps businesses m",
+      "noAuth": false,
+      "categories": [
+        "human resources",
+        "hr talent & recruitment"
+      ]
+    },
+    {
+      "slug": "whatsapp",
+      "label": "WhatsApp",
+      "blurb": "Enables interaction with customers through the WhatsApp Business API for messaging and aut",
+      "noAuth": false,
+      "categories": [
+        "phone & sms",
+        "communication"
+      ]
+    },
+    {
+      "slug": "dynamics365",
+      "label": "Dynamics 365",
+      "blurb": "Dynamics 365 from Microsoft combines CRM, ERP, and productivity apps to streamline sales, ",
+      "noAuth": false,
+      "categories": [
+        "crm",
+        "project management"
+      ]
+    },
+    {
+      "slug": "zenrows",
+      "label": "ZenRows",
+      "blurb": "ZenRows is a web scraping API allowing developers to bypass CAPTCHAs and blocks, gather st",
+      "noAuth": false,
+      "categories": [
+        "ai web scraping",
+        "developer tools"
+      ]
+    },
+    {
+      "slug": "linkup",
+      "label": "Linkup",
+      "blurb": "Linkup is a search engine that allows you to search the web for relevant results.",
+      "noAuth": false,
+      "categories": [
+        "web search & research",
+        "ai web scraping",
+        "developer tools"
+      ]
+    },
+    {
+      "slug": "finage",
+      "label": "Finage",
+      "blurb": "Finage provides secure RESTful APIs for real-time and historical financial market data cov",
+      "noAuth": false,
+      "categories": [
+        "analytics",
+        "developer tools"
+      ]
+    },
+    {
+      "slug": "formcarry",
+      "label": "Formcarry",
+      "blurb": "Formcarry is a form API that allows you to collect submissions from your own designed HTML",
+      "noAuth": false,
+      "categories": [
+        "forms & surveys",
+        "developer tools"
+      ]
+    }
+  ]
+}

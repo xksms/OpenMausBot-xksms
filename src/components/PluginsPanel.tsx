@@ -4,6 +4,7 @@ import { api, useStore, type Bot, type InstanceInfo } from "@/state/store";
 import { cn } from "@/lib/cn";
 import { glassPopupFrameStyle } from "@/lib/glass-popup";
 import { t } from "@/lib/i18n";
+import { appBlurb, appCategoryLabel, appDescriptionTitle } from "@/lib/app-catalog-copy";
 import type { LocaleKey } from "@/locales";
 import { readCachedInventory, writeCachedInventory } from "@/lib/connected-apps-cache";
 import { reserveConnectionPage, reusableConnectionUrl, type PendingAuthorization } from "@/lib/connector-oauth";
@@ -37,61 +38,12 @@ export interface ToolkitCard {
   categories?: string[];
 }
 
-const APP_CATEGORY_LABELS: Record<string, LocaleKey> = {
-  Productivity: "apps.category.productivity",
-  "Developer tools": "apps.category.developerTools",
-  Communication: "apps.category.communication",
-  Files: "apps.category.files",
-  Analytics: "apps.category.analytics",
-  Social: "apps.category.social",
-  Automation: "apps.category.automation",
-  "Sales and CRM": "apps.category.salesCrm",
-  Design: "apps.category.design",
-  Finance: "apps.category.finance",
-};
-
-const APP_BLURBS: Record<string, LocaleKey> = {
-  slack: "apps.blurb.slack",
-  github: "apps.blurb.github",
-  gmail: "apps.blurb.gmail",
-  googlecalendar: "apps.blurb.googlecalendar",
-  googlesheets: "apps.blurb.googlesheets",
-  googledocs: "apps.blurb.googledocs",
-  googledrive: "apps.blurb.googledrive",
-  notion: "apps.blurb.notion",
-  linear: "apps.blurb.linear",
-  sentry: "apps.blurb.sentry",
-  posthog: "apps.blurb.posthog",
-  discord: "apps.blurb.discord",
-  twitter: "apps.blurb.twitter",
-  reddit: "apps.blurb.reddit",
-  zapier: "apps.blurb.zapier",
-  hubspot: "apps.blurb.hubspot",
-  salesforce: "apps.blurb.salesforce",
-  jira: "apps.blurb.jira",
-  asana: "apps.blurb.asana",
-  trello: "apps.blurb.trello",
-  dropbox: "apps.blurb.dropbox",
-  airtable: "apps.blurb.airtable",
-  figma: "apps.blurb.figma",
-  stripe: "apps.blurb.stripe",
-};
-
-function appCategoryLabel(category: string): string {
-  const key = APP_CATEGORY_LABELS[category];
-  return key ? t(key) : category;
-}
-
-function appBlurb(card: Pick<ToolkitCard, "slug" | "blurb">): string {
-  const key = APP_BLURBS[card.slug];
-  return key ? t(key) : card.blurb;
-}
-
 let cachedConnectorStatus: Record<string, ConnectorStatus> | null = null;
 let cachedConnectorStatusAt = 0;
 let cachedConnectorStatusAuthoritative = true;
 let connectorStatusRequest: Promise<ConnectorInventory> | null = null;
-const CONNECTOR_STATUS_CACHE_MS = 30_000;
+const CONNECTOR_STATUS_CACHE_MS = 5 * 60_000;
+const CONNECTOR_STATUS_TIMEOUT_MS = 10_000;
 
 export interface ConnectorInventory {
   services: Record<string, ConnectorStatus>;
@@ -99,19 +51,38 @@ export interface ConnectorInventory {
   authoritative: boolean;
 }
 
+function cachedConnectedApps(): ConnectorInventory | null {
+  if (cachedConnectorStatus === null) {
+    const persisted = readCachedInventory();
+    if (persisted) {
+      cachedConnectorStatus = persisted.services;
+      cachedConnectorStatusAt = persisted.at;
+      cachedConnectorStatusAuthoritative = true;
+    }
+  }
+  return cachedConnectorStatus === null ? null : {
+    services: cachedConnectorStatus,
+    authoritative: cachedConnectorStatusAuthoritative,
+  };
+}
+
 export function preloadConnectedApps(force = false): Promise<ConnectorInventory> {
-  if (!force && cachedConnectorStatus !== null && Date.now() - cachedConnectorStatusAt < CONNECTOR_STATUS_CACHE_MS) {
-    return Promise.resolve({
-      services: cachedConnectorStatus,
-      authoritative: cachedConnectorStatusAuthoritative,
-    });
+  const cached = cachedConnectedApps();
+  const age = Date.now() - cachedConnectorStatusAt;
+  const pending = Object.values(cached?.services ?? {}).some((service) => service.pending);
+  if (!force && cached?.authoritative && age >= 0 && age < CONNECTOR_STATUS_CACHE_MS && !pending) {
+    return Promise.resolve(cached);
   }
   if (connectorStatusRequest) return connectorStatusRequest;
-  connectorStatusRequest = api("/api/connectors/connected")
+  const unavailable = (): ConnectorInventory => {
+    cachedConnectorStatusAuthoritative = false;
+    return { services: cachedConnectorStatus ?? {}, authoritative: false };
+  };
+  connectorStatusRequest = api("/api/connectors/connected", { timeoutMs: CONNECTOR_STATUS_TIMEOUT_MS })
     .then((response) => {
       const services: Record<string, ConnectorStatus> = response.services ?? {};
       if (response.credentialStore === "unavailable") {
-        return { services: readCachedInventory()?.services ?? {}, authoritative: false };
+        return unavailable();
       }
       cachedConnectorStatus = services;
       cachedConnectorStatusAt = Date.now();
@@ -119,7 +90,7 @@ export function preloadConnectedApps(force = false): Promise<ConnectorInventory>
       writeCachedInventory(services, Date.now());
       return { services, authoritative: true };
     })
-    .catch(() => ({ services: readCachedInventory()?.services ?? {}, authoritative: false }))
+    .catch(unavailable)
     .finally(() => {
       connectorStatusRequest = null;
     });
@@ -283,7 +254,7 @@ export function PluginsPanel() {
   const [mode, setMode] = useState<"managed" | "self-hosted" | "unavailable">("unavailable");
   const [setup, setSetup] = useState<ConnectorSetup | undefined>(undefined);
   const [status, setStatus] = useState<Record<string, ConnectorStatus>>(
-    () => cachedConnectorStatus ?? readCachedInventory()?.services ?? {},
+    () => cachedConnectedApps()?.services ?? {},
   );
   const [stale, setStale] = useState(
     cachedConnectorStatus !== null && !cachedConnectorStatusAuthoritative,
@@ -294,7 +265,7 @@ export function PluginsPanel() {
   const [busySlug, setBusySlug] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [inventoryPhase, setInventoryPhase] = useState<ConnectorInventoryPhase>(
-    cachedConnectorStatus === null ? "loading" : "ready",
+    cachedConnectedApps() === null ? "loading" : "ready",
   );
   const [error, setError] = useState<string | { key: LocaleKey } | null>(null);
   const [search, setSearch] = useState("");
@@ -346,12 +317,12 @@ export function PluginsPanel() {
       .catch(() => ({}));
   }, []);
 
-  const refreshConnectedStatus = useCallback((force = false): Promise<Record<string, ConnectorStatus>> => {
+  const refreshConnectedStatus = useCallback((force = false): Promise<ConnectorInventory> => {
     const requestGenerations = new Map(statusGenerations.current);
     setRefreshing(true);
     return preloadConnectedApps(force)
       .then(({ services, authoritative }) => {
-        setStale(!authoritative);
+        setStale(!authoritative && cachedConnectedApps() !== null);
         setStatus((current) => mergeCompleteConnectorStatus(
           current,
           services,
@@ -368,18 +339,18 @@ export function PluginsPanel() {
             return next;
           });
         }
-        return services;
+        return { services, authoritative };
       })
       .finally(() => setRefreshing(false));
   }, []);
 
   const loadConnectionInventory = useCallback((force = false) => {
-    const hadCachedInventory = cachedConnectorStatus !== null;
+    const hadCachedInventory = cachedConnectedApps() !== null;
     if (!hadCachedInventory) setInventoryPhase("loading");
     setError(null);
     return refreshConnectedStatus(force)
-      .then((services) => {
-        setInventoryPhase("ready");
+      .then(({ services, authoritative }) => {
+        setInventoryPhase(authoritative || hadCachedInventory ? "ready" : "error");
         return services;
       })
       .catch((cause) => {
@@ -399,8 +370,8 @@ export function PluginsPanel() {
   useEffect(() => {
     if (inventoryPhase !== "ready") return;
     cachedConnectorStatus = status;
-    cachedConnectorStatusAt = Date.now();
     cachedConnectorStatusAuthoritative = !stale;
+    if (!stale) writeCachedInventory(status, cachedConnectorStatusAt);
   }, [inventoryPhase, stale, status]);
 
   useEffect(() => {
@@ -730,6 +701,7 @@ export function PluginsPanel() {
             {moreCategories.length > 0 && (
               <SidebarPopoverMenu
                 placement="below"
+                portal
                 ariaLabel={t("apps.moreCategories")}
                 items={moreCategories.map((name) => ({ key: name, label: appCategoryLabel(name), active: category === name, onSelect: () => pickCategory(name) }))}
                 renderTrigger={({ open }) => (
@@ -748,7 +720,7 @@ export function PluginsPanel() {
             <div className="mb-3 flex items-start gap-2 rounded-xl bg-warning/10 px-3 py-2 text-[12.5px] text-warning">
               <TriangleAlert size={14} className="mt-px shrink-0" />
               <span>
-                {t("connectors.stale")}
+                {t("connectors.cachedInventory")}
               </span>
             </div>
           )}
@@ -967,7 +939,7 @@ export function PluginsPanel() {
                 </span>
               )}
             </div>
-            <div className="truncate text-[12.5px] leading-[18px] text-ink-secondary" title={description}>
+            <div className="truncate text-[12.5px] leading-[18px] text-ink-secondary" title={appDescriptionTitle(card, description)}>
               {description}
             </div>
           </div>

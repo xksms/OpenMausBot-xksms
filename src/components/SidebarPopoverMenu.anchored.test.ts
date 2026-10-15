@@ -7,6 +7,7 @@ import {
   ANCHORED_MENU_WIDTH,
   SidebarPopoverMenu,
   anchoredMenuPosition,
+  dropdownMenuPosition,
   nextMenuIndex,
   submenuPosition,
   type SidebarMenuItem,
@@ -36,6 +37,21 @@ describe("anchoredMenuPosition", () => {
   it("drops below the trigger when there is no room above, and clamps to a short window", () => {
     expect(anchoredMenuPosition({ left: 12, right: 60, top: 40, bottom: 80 }, menu, viewport).top).toBe(86);
     expect(anchoredMenuPosition({ left: 12, right: 60, top: 100, bottom: 140 }, menu, { width: 800, height: 320 }).top).toBe(12);
+  });
+});
+
+describe("dropdownMenuPosition", () => {
+  it("starts at the trigger without crossing either edge of a narrow window", () => {
+    const view = { width: 320, height: 720 };
+    expect(dropdownMenuPosition({ left: 40, right: 100, top: 220, bottom: 248 }, menu, view)).toEqual({ left: 32, top: 254, maxHeight: 458 });
+    expect(dropdownMenuPosition({ left: 0, right: 60, top: 220, bottom: 248 }, menu, view, true).left).toBe(8);
+  });
+
+  it("opens above near the bottom and limits a long menu to the available space", () => {
+    const anchor = { left: 240, right: 300, top: 600, bottom: 628 };
+    expect(dropdownMenuPosition(anchor, menu, viewport)).toEqual({ left: 240, top: 294, maxHeight: 586 });
+    expect(dropdownMenuPosition(anchor, { ...menu, height: 1800 }, viewport)).toEqual({ left: 240, top: 8, maxHeight: 586 });
+    expect(dropdownMenuPosition({ ...anchor, top: 200, bottom: 228 }, { ...menu, height: 1800 }, viewport)).toEqual({ left: 240, top: 234, maxHeight: 558 });
   });
 });
 
@@ -115,6 +131,34 @@ describe("the anchored menu in a document", () => {
     expect(support.getAttribute("aria-haspopup")).toBe("menu");
     expect(support.querySelector("svg")).not.toBeNull();
     expect(menu.querySelector('[role="menuitem"]')!.className).toContain("text-[15px]");
+  });
+
+  it("portals a scrollable dropdown outside a clipping dialog and handles Escape before the dialog", async () => {
+    host.style.overflow = "hidden";
+    await act(async () => root.render(createElement(SidebarPopoverMenu, {
+      items: Array.from({ length: 30 }, (_, index) => item(`Category ${index}`)),
+      ariaLabel: "More categories", placement: "below", portal: true, renderTrigger: () => "More",
+    })));
+    await key(trigger(), "ArrowDown");
+    await flush();
+    const menu = sheet()!;
+    expect(menu.parentElement).toBe(document.body);
+    expect(menu.style.position).toBe("fixed");
+    expect(menu.className).toContain("overflow-y-auto");
+    expect(Number.parseFloat(menu.style.maxHeight)).toBeGreaterThan(0);
+    expect(menu.querySelectorAll('[role="menuitem"]')).toHaveLength(30);
+    expect(document.activeElement).toBe(menu.querySelector('[role="menuitem"]'));
+    let escaped = false;
+    const onKey = () => { escaped = true; };
+    window.addEventListener("keydown", onKey);
+    try {
+      await act(async () => menu.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true })));
+      expect(sheet()).toBeNull();
+      expect(escaped).toBe(false);
+      expect(document.activeElement).toBe(trigger());
+    } finally {
+      window.removeEventListener("keydown", onKey);
+    }
   });
 
   it("opens from the keyboard on the first item and walks the items", async () => {

@@ -43,6 +43,18 @@ export function anchoredMenuPosition(anchor: Box, menu: Size, viewport: Size, rt
   return { left, top: Math.min(Math.max(top, EDGE_MARGIN), maxTop) };
 }
 
+export function dropdownMenuPosition(anchor: Box, menu: Size, viewport: Size, rtl = false): { left: number; top: number; maxHeight: number } {
+  const below = Math.max(0, viewport.height - anchor.bottom - ANCHOR_GAP - EDGE_MARGIN);
+  const above = Math.max(0, anchor.top - ANCHOR_GAP - EDGE_MARGIN);
+  const opensBelow = menu.height <= below || below >= above;
+  const maxHeight = opensBelow ? below : above;
+  return {
+    left: anchoredMenuPosition(anchor, menu, viewport, rtl).left,
+    top: opensBelow ? anchor.bottom + ANCHOR_GAP : anchor.top - ANCHOR_GAP - Math.min(menu.height, maxHeight),
+    maxHeight,
+  };
+}
+
 export function submenuPosition(menu: Box, row: Box, submenu: Size, viewport: Size, rtl = false): { left: number; top: number } {
   const gap = 4;
   const after = rtl ? menu.left - gap - submenu.width : menu.right + gap;
@@ -158,11 +170,13 @@ export function SidebarPopoverMenu({
   ariaLabel,
   openOnHover = false,
   placement = "above",
+  portal = placement === "above",
   triggerClassName = "w-full",
   triggerTitle,
   renderTrigger,
 }: {
   placement?: "above" | "below";
+  portal?: boolean;
   items: SidebarMenuItem[];
   ariaLabel: string;
   openOnHover?: boolean;
@@ -173,7 +187,7 @@ export function SidebarPopoverMenu({
   const [open, setOpen] = useState(false);
   const [pinned, setPinned] = useState(false);
   const [submenu, setSubmenu] = useState<string | null>(null);
-  const [position, setPosition] = useState<{ left: number; top: number } | null>(null);
+  const [position, setPosition] = useState<{ left: number; top: number; maxHeight?: number } | null>(null);
   const [subPosition, setSubPosition] = useState<{ left: number; top: number } | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -186,7 +200,7 @@ export function SidebarPopoverMenu({
   const subTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const menuId = useId();
   const motion = useMenuMotion(open);
-  const anchored = placement === "above";
+  const anchored = portal;
 
   const clearTimers = () => {
     if (openTimer.current) clearTimeout(openTimer.current);
@@ -228,7 +242,8 @@ export function SidebarPopoverMenu({
       const trigger = triggerRef.current, menu = menuRef.current;
       if (!trigger || !menu) return;
       const viewport = { width: window.innerWidth, height: window.innerHeight };
-      setPosition(anchoredMenuPosition(trigger.getBoundingClientRect(), { width: menu.offsetWidth, height: menu.offsetHeight }, viewport, isRtl(trigger)));
+      const size = { width: menu.offsetWidth, height: placement === "below" ? menu.scrollHeight + 2 : menu.offsetHeight };
+      setPosition((placement === "below" ? dropdownMenuPosition : anchoredMenuPosition)(trigger.getBoundingClientRect(), size, viewport, isRtl(trigger)));
       const sub = subRef.current, row = subRowRef.current;
       if (sub && row) {
         setSubPosition(submenuPosition(menu.getBoundingClientRect(), row.getBoundingClientRect(), { width: sub.offsetWidth, height: sub.offsetHeight }, viewport, isRtl(trigger)));
@@ -241,7 +256,7 @@ export function SidebarPopoverMenu({
       window.removeEventListener("resize", place);
       window.removeEventListener("scroll", place, true);
     };
-  }, [anchored, motion.shown, submenu, items.length]);
+  }, [anchored, placement, motion.shown, submenu, items.length]);
 
   // Focus waits until the anchored sheet is placed: a hidden sheet cannot take focus.
   useEffect(() => {
@@ -303,7 +318,7 @@ export function SidebarPopoverMenu({
   };
 
   const openItem = submenu ? items.find((item) => item.key === submenu) : undefined;
-  const roomy = anchored;
+  const roomy = placement === "above";
   const sheetClass = cn(
     "overflow-hidden border border-hairline/50 bg-menu shadow-2xl shadow-black/50",
     roomy ? "rounded-2xl p-1.5" : "rounded-xl py-1.5",
@@ -323,11 +338,11 @@ export function SidebarPopoverMenu({
         if (subTimer.current) clearTimeout(subTimer.current);
         subTimer.current = setTimeout(() => setSubmenu((key) => (subRef.current?.matches(":hover") ? key : null)), CLOSE_DELAY_MS);
       }}
-      style={anchored ? { position: "fixed", left: position?.left ?? 0, top: position?.top ?? 0, width: ANCHORED_MENU_WIDTH, maxWidth: `calc(100vw - ${EDGE_MARGIN * 2}px)`, visibility: position ? undefined : "hidden" } : undefined}
+      style={anchored ? { position: "fixed", left: position?.left ?? 0, top: position?.top ?? 0, width: ANCHORED_MENU_WIDTH, maxWidth: `calc(100vw - ${EDGE_MARGIN * 2}px)`, maxHeight: position?.maxHeight, visibility: position ? undefined : "hidden" } : undefined}
       className={cn(
         sheetClass,
         anchored ? "z-[60]" : "absolute z-40",
-        placement === "below" && "top-full right-0 mt-1 w-72 max-w-[calc(100vw-2rem)]",
+        placement === "below" && (anchored ? "overflow-y-auto overscroll-contain" : "top-full right-0 mt-1 w-72 max-w-[calc(100vw-2rem)]"),
         motion.className,
       )}
     >
@@ -378,6 +393,12 @@ export function SidebarPopoverMenu({
       onPointerEnter={hoverOpen}
       onPointerLeave={hoverClose}
       onFocus={() => openOnHover && setOpen(true)}
+      onKeyDown={(event) => {
+        if (!anchored || !open || event.key !== "Escape" || event.defaultPrevented || event.nativeEvent.isComposing) return;
+        event.preventDefault();
+        event.stopPropagation();
+        close(true);
+      }}
       onBlur={(event) => {
         if (pinned) return;
         if (!event.relatedTarget || !rootRef.current?.contains(event.relatedTarget as Node)) setOpen(false);
