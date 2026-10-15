@@ -169,7 +169,6 @@ export function PermissionsSection({
   );
 }
 
-/** Security: separate from the approval level because Full access does not bypass it. */
 function OutboundControl({ bot, onChange }: { bot: Bot; onChange: (policy: OutboundPolicy) => void }) {
   const policy = bot.outbound ?? DEFAULT_OUTBOUND_POLICY;
   const [today, setToday] = useState<number | null>(null);

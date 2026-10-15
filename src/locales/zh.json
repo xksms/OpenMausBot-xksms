@@ -4441,7 +4441,7 @@
   "permissions.level.live": "新对话、例行任务和委派工作的默认级别。完全访问也会立即应用于所有现有对话。可对某个对话使用“刷新权限”，把当前级别应用到该对话。",
   "permissions.level.applyAll": "对所有对话应用完全访问",
   "permissions.outbound.title": "以你的名义发送",
-  "permissions.outbound.detail": "通过已连接的应用发送邮件、消息、帖子、邀请和付款。读取和起草不计入。这适用于所有审批级别，包括完全访问。",
+  "permissions.outbound.detail": "通过已连接的应用发送邮件、消息、帖子、邀请和付款。读取和起草不计入。完全访问会直接发送，无需询问。",
   "permissions.outbound.ask": "每次都问我",
   "permissions.outbound.askHint": "每次发送都等你确认。",
   "permissions.outbound.allow": "允许每日额度",
