@@ -5,6 +5,7 @@ import { useStore, type Bot } from "@/state/store";
 import { useBotEditor } from "./bot-settings/BotEditorContext";
 import { imageAttachmentFromFile } from "@/lib/composer-attachments";
 import { cn } from "@/lib/cn";
+import { t } from "@/lib/i18n";
 import {
   PICKABLE_STATES,
   MAUS_COLORS,
@@ -119,11 +120,11 @@ function AvatarFraming({
 }
 
 const CROP_LABEL = {
-  mascot: "Mascot",
-  circle: "Circle",
-  rounded: "Rounded",
-  square: "Square",
-} satisfies Record<BotAvatarCrop, string>;
+  mascot: "botAvatar.crop.mascot",
+  circle: "botAvatar.crop.circle",
+  rounded: "botAvatar.crop.rounded",
+  square: "botAvatar.crop.square",
+} satisfies Record<BotAvatarCrop, Parameters<typeof t>[0]>;
 
 export function BotProfileAvatarCard({
   bot,
@@ -215,13 +216,13 @@ export function BotProfileAvatarCard({
   return (
     <div className="overflow-hidden rounded-xl border border-hairline/40 bg-card">
       <div className="flex items-center justify-between border-b border-hairline/40 px-3 py-2.5">
-        <span className="rounded-lg bg-control px-3 py-1.5 text-[14px] font-medium text-ink">Avatar</span>
+        <span className="rounded-lg bg-control px-3 py-1.5 text-[14px] font-medium text-ink">{t("botAvatar.title")}</span>
         <button
           disabled={busy}
           onClick={() => onPatch({ avatarCrop: "mascot", color: "green", mascotExpression: null, mascotBody: "cursor" })}
           className="rounded-md px-2 py-1.5 text-[13px] text-ink-secondary hover:bg-control hover:text-ink disabled:opacity-50"
         >
-          Reset mascot
+          {t("botAvatar.resetMascot")}
         </button>
       </div>
 
@@ -262,25 +263,25 @@ export function BotProfileAvatarCard({
             className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-control px-3 py-2 text-[13px] text-ink hover:bg-raised-hover disabled:opacity-50"
           >
             {uploading ? <Loader2 size={14} className="animate-spin" /> : <ImagePlus size={14} />}
-            Upload image
+            {t("botAvatar.uploadImage")}
           </button>
           {bot.avatarUrl && (
             <button
               type="button"
               onClick={removeImage}
               disabled={busy}
-              aria-label="Remove custom avatar image"
-              title="Remove custom image"
+              aria-label={t("botAvatar.removeImage")}
+              title={t("botAvatar.removeImageTitle")}
               className="flex size-10 items-center justify-center rounded-lg text-ink-secondary hover:bg-control hover:text-danger disabled:opacity-50"
             >
               <Trash2 size={14} />
             </button>
           )}
         </div>
-        <div className="mt-1.5 text-[11.5px] text-ink-secondary">PNG, JPEG, GIF, or WebP · up to 10 MB</div>
+        <div className="mt-1.5 text-[11.5px] text-ink-secondary">{t("botAvatar.imageFormats")}</div>
 
         <div className="mb-2 mt-4 text-[12px] font-medium uppercase tracking-[0.08em] text-ink-secondary">
-          Shape
+          {t("botAvatar.shape")}
         </div>
         <div className="grid grid-cols-4 overflow-hidden rounded-lg border border-hairline/40">
           {BOT_AVATAR_CROPS.map((candidate, index) => (
@@ -296,7 +297,7 @@ export function BotProfileAvatarCard({
                 crop === candidate ? "bg-control text-ink" : "text-ink-secondary hover:bg-control/60 hover:text-ink",
               )}
             >
-              {CROP_LABEL[candidate]}
+              {t(CROP_LABEL[candidate])}
             </button>
           ))}
         </div>
@@ -304,7 +305,7 @@ export function BotProfileAvatarCard({
         {crop === "mascot" && (
           <>
             <div className="mb-2 mt-4 text-[12px] font-medium uppercase tracking-[0.08em] text-ink-secondary">
-              Expression
+              {t("botAvatar.expression")}
             </div>
             <div className="grid grid-cols-5 gap-2">
               {PICKABLE_STATES.map((expression) => (

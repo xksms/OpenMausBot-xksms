@@ -1578,7 +1578,7 @@ function ChatHeaderMenu({ bot, messages, findOpen, onFind }: {
     } satisfies SidebarMenuItem] : []),
     ...(remoteClient ? [] : [{
       key: "activity",
-      label: "Activity",
+      label: t("activity.title"),
       icon: <ListChecks size={16} />,
       active: state.activityOpen,
       separatorBefore: !usage,

@@ -4,6 +4,7 @@ import { Switch } from "./SettingsPrimitives";
 import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { z } from "zod";
 import { waitForLocalVmReady } from "@/lib/local-vm-readiness";
+import { localVmProblem } from "@/lib/local-vm-problem";
 import {
   CalendarClock,
   Columns2,
@@ -547,7 +548,7 @@ export function ComputerPanel({
               status.image &&
               status.create_supported;
             setError(canCreateHere || status.resumable ? null : new LocalizedPanelError(
-              "computer.err.vmOpenSettings", status.problem, "computer.err.vmNotReady",
+              "computer.err.vmOpenSettings", localVmProblem(status.problem), "computer.err.vmNotReady",
             ));
             setPhase("vm-unavailable");
           }
@@ -1095,7 +1096,7 @@ export function ComputerPanel({
           signal: controller.signal,
         });
         const status = await waitForLocalVmReady(started, () => api(threadPath("local-computer"), { signal: controller.signal }), controller.signal);
-        if (!status.ready) throw new Error(status.problem ?? t("computer.err.vmNotReady"));
+        if (!status.ready) throw new Error(localVmProblem(status.problem) ?? t("computer.err.vmNotReady"));
         setVmStatus(status);
         setPhase("vm");
       } else {

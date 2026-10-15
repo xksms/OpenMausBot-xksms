@@ -37,6 +37,56 @@ export interface ToolkitCard {
   categories?: string[];
 }
 
+const APP_CATEGORY_LABELS: Record<string, LocaleKey> = {
+  Productivity: "apps.category.productivity",
+  "Developer tools": "apps.category.developerTools",
+  Communication: "apps.category.communication",
+  Files: "apps.category.files",
+  Analytics: "apps.category.analytics",
+  Social: "apps.category.social",
+  Automation: "apps.category.automation",
+  "Sales and CRM": "apps.category.salesCrm",
+  Design: "apps.category.design",
+  Finance: "apps.category.finance",
+};
+
+const APP_BLURBS: Record<string, LocaleKey> = {
+  slack: "apps.blurb.slack",
+  github: "apps.blurb.github",
+  gmail: "apps.blurb.gmail",
+  googlecalendar: "apps.blurb.googlecalendar",
+  googlesheets: "apps.blurb.googlesheets",
+  googledocs: "apps.blurb.googledocs",
+  googledrive: "apps.blurb.googledrive",
+  notion: "apps.blurb.notion",
+  linear: "apps.blurb.linear",
+  sentry: "apps.blurb.sentry",
+  posthog: "apps.blurb.posthog",
+  discord: "apps.blurb.discord",
+  twitter: "apps.blurb.twitter",
+  reddit: "apps.blurb.reddit",
+  zapier: "apps.blurb.zapier",
+  hubspot: "apps.blurb.hubspot",
+  salesforce: "apps.blurb.salesforce",
+  jira: "apps.blurb.jira",
+  asana: "apps.blurb.asana",
+  trello: "apps.blurb.trello",
+  dropbox: "apps.blurb.dropbox",
+  airtable: "apps.blurb.airtable",
+  figma: "apps.blurb.figma",
+  stripe: "apps.blurb.stripe",
+};
+
+function appCategoryLabel(category: string): string {
+  const key = APP_CATEGORY_LABELS[category];
+  return key ? t(key) : category;
+}
+
+function appBlurb(card: Pick<ToolkitCard, "slug" | "blurb">): string {
+  const key = APP_BLURBS[card.slug];
+  return key ? t(key) : card.blurb;
+}
+
 let cachedConnectorStatus: Record<string, ConnectorStatus> | null = null;
 let cachedConnectorStatusAt = 0;
 let cachedConnectorStatusAuthoritative = true;
@@ -512,7 +562,7 @@ export function PluginsPanel() {
   };
 
   const matching = (cards ?? []).filter(
-    (c) => !search || `${c.label} ${c.slug} ${c.blurb}`.toLowerCase().includes(search.toLowerCase()),
+    (c) => !search || `${c.label} ${c.slug} ${c.blurb} ${appBlurb(c)}`.toLowerCase().includes(search.toLowerCase()),
   );
   const isConnected = (slug: string) => Boolean(status[slug]?.connected || status[slug]?.accounts?.length);
   const filter: AppsFilter = surface === "mcp" ? "mcp" : tab === "connected" ? "connected" : "all";
@@ -560,7 +610,7 @@ export function PluginsPanel() {
     ? t("connectors.section.yours")
     : search
       ? t("connectors.section.results")
-      : category ?? (sections.length > 1 ? t("apps.section.all") : t("connectors.section.available"));
+      : category ? appCategoryLabel(category) : (sections.length > 1 ? t("apps.section.all") : t("connectors.section.available"));
   const pill = "inline-flex h-7 shrink-0 items-center justify-center gap-2 rounded-full px-3 text-[13px] font-medium leading-5 transition-colors";
   const pillTone = (selected: boolean) => selected
     ? "bg-ink text-app"
@@ -674,17 +724,17 @@ export function PluginsPanel() {
                 onClick={() => pickCategory(category === name ? null : name)}
                 className={cn(pill, pillTone(filter === "all" && category === name))}
               >
-                {name}
+                {appCategoryLabel(name)}
               </button>
             ))}
             {moreCategories.length > 0 && (
               <SidebarPopoverMenu
                 placement="below"
                 ariaLabel={t("apps.moreCategories")}
-                items={moreCategories.map((name) => ({ key: name, label: name, active: category === name, onSelect: () => pickCategory(name) }))}
+                items={moreCategories.map((name) => ({ key: name, label: appCategoryLabel(name), active: category === name, onSelect: () => pickCategory(name) }))}
                 renderTrigger={({ open }) => (
                   <span className={cn(pill, pillTone(filter === "all" && categoryInMore), open && !categoryInMore && "bg-raised-hover text-ink")}>
-                    {categoryInMore ? category : t("apps.more")}
+                    {categoryInMore && category ? appCategoryLabel(category) : t("apps.more")}
                     <ChevronDown size={14} aria-hidden="true" />
                   </span>
                 )}
@@ -775,7 +825,7 @@ export function PluginsPanel() {
                 <AppsSection
                   key={section.category}
                   id={`apps-section-${section.category}`}
-                  title={section.category}
+                  title={appCategoryLabel(section.category)}
                   viewAll={section.more ? { label: t("apps.viewAll"), onClick: () => pickCategory(section.category) } : undefined}
                 >
                   {section.cards.map((card) => renderTile(card))}
@@ -882,7 +932,7 @@ export function PluginsPanel() {
           ? t("connectors.signedOut")
           : failed && !accounts.length
             ? t("connectors.authExpired")
-            : card.blurb
+            : appBlurb(card)
     );
     return (
       <div
